@@ -206,5 +206,5 @@ x86tools
 personal
 
 #sudo poweroff;exit
-echo "All Done, gracefully shutdown vmguest `sudo poweroff;exit` to use image"
+echo "All Done, gracefully shutdown vmguest 'sudo poweroff;exit' to use image"
 exit 0
