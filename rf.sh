@@ -36,10 +36,10 @@ sudo update-grub2
 sudo rm -r /boot.bak
 }
 
-function grub2serial {
+function grub2defaults {
 sudo sed -i 's/=console/="console serial"/g' /etc/default/grub
 sudo sed -i 's/#GRUB_T/GRUB_T/g' /etc/default/grub
-sudo sed -i 's/""/"console=tty1 console=ttyS0,115200"/g' /etc/default/grub
+sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M"/g' /etc/default/grub
 sudo sed -i 's/"quiet"/""/g' /etc/default/grub
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' | sudo tee -a /etc/default/grub
 sudo update-grub2
@@ -192,7 +192,7 @@ sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr #nma
 fixsudo
 decswap
 bootfat
-grub2serial
+grub2defaults
 grub2uefi32
 grub2uefi64
 autonetconf
