@@ -173,8 +173,8 @@ EOF
 chmod +x /home/pi/init_resize_rootfs.sh
 }
 
-function raspbiantools {
-sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils blends-tasks bzip2 cu dc device-tree-compiler distro-info-data ed fakeroot file firmware-atheros firmware-brcm80211 firmware-libertas hardlink htop info iw keyutils less manpages ncdu netcat-openbsd netcat-traditional psmisc rsync strace unzip usb-modeswitch usbutils xml-core xz-utils #firmware-misc-nonfree firmware-realtek
+function raspbianliteslim {
+sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils blends-tasks bzip2 cu dc device-tree-compiler distro-info-data ed fakeroot file firmware-atheros firmware-brcm80211 firmware-libertas hardlink htop info iw keyutils less man-db manpages ncdu netcat-openbsd netcat-traditional psmisc rsync strace unzip usb-modeswitch usbutils xml-core xz-utils #firmware-misc-nonfree firmware-realtek
 }
 # firmware alters generic initrd behaviour check?
 
@@ -200,7 +200,7 @@ mkrclocal
 mksshswitch
 cmdlinetxt
 keyboardlang
-raspbiantools
+raspbianliteslim
 resizescript
 x86tools
 personal
