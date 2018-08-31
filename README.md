@@ -18,11 +18,11 @@ After the guest machine started, the first script will run the 'host2guest.sh' s
 After ~45 minutes(hardcoded time), there will be a < 1GB 'disk1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
 
 ## Start?
-Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 amd64(32bit may work) desktop, after typing your sudo password let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
+Download/clone this github repo and run the 'host.sh' script with 2 arguments one for architecture (i386/amd64) and the second for imgsize(MegaBytes) on a ubuntu 18.04 amd64(32bit may work) desktop, after typing your sudo password let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
 
 ```
 chmod +x *.sh #makes the scripts executable
-./host.sh #asks for sudo and will run for ~45 minutes
+./host.sh i386 1024 #asks for sudo and will run for ~45 minutes
 ```
 
 After imaging and running the image on bare metal target system its a good start to change the timezone and expand the rootfs or change password. Before that it may be wise to setup ssh or wpa_supplicant just follow raspbian documentation:
@@ -36,7 +36,6 @@ sudo ./init_resize_rootfs.sh #expands rootfs to max bare metal disk and reboots
 - dhcpcd static ip
 - adafruit readonly script adds to cmdline.txt instead of grub "fastboot noswap ro"
 - compare initrd (generic) before/after additonal firmware?
-- 64bit image already works but use 64bit.iso uses qemu system-x86_64 and remove one step from qcmpayload (sendkey up) at kernel selection
 
 ## Links
 - [qemu console monitor scripting telnet](https://stackoverflow.com/questions/33362322/how-in-qemu-send-mouse-move-mouse-button-sendkey-via-some-api)
