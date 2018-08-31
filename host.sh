@@ -40,6 +40,6 @@ sudo apt-get update
 sudo apt-get -y install qemu-kvm
 wget https://caesar.ftp.acc.umu.se/debian-cd/current/$IARCH/iso-cd/debian-9.5.0-$IARCH-netinst.iso
 qemu-img create -f raw disk-$IARCH-$DSIZE.img $ISIZE'M'
-sudo qemu-system-$QARCH -enable-kvm -drive format=raw,file=disk-$IARCH-$DSIZE.img -cdrom debian-9.5.0-i386-netinst.iso -boot d -m 512 -monitor telnet:localhost:93$TPORT,server,nowait &
+sudo qemu-system-$QARCH -enable-kvm -drive format=raw,file=disk-$IARCH-$DSIZE.img -cdrom debian-9.5.0-$IARCH-netinst.iso -boot d -m 512 -monitor telnet:localhost:93$TPORT,server,nowait &
 sleep 10
 ./host2guest.sh qcmpayload.txt $TPORT $IARCH
