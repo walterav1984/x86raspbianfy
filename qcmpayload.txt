@@ -178,22 +178,9 @@ sendkey kp_enter
 #How to use this free space: Create a new partition
 sendkey kp_enter
 #New partition size:
-sendkey backspace
-sendkey backspace
-sendkey backspace
-sendkey backspace
-sendkey backspace
-sendkey backspace
-sendkey backspace
-sendkey backspace
-sendkey 8
-sendkey 9
-sendkey 9
 sendkey kp_enter
 #Type for the new partition:Primary
 sendkey up
-sendkey kp_enter
-#Location for the new partition:Beginning
 sendkey kp_enter
 #Partition settings:Mount labe;: 
 sendkey down
@@ -235,7 +222,7 @@ wait10
 sendkey kp_enter
 wait275
 #Kernel to install:linux-image-686 / remove sendkey up for amd64!
-sendkey up
+#STEPARCHDIFF
 sendkey kp_enter
 wait25
 #Drivers to include in the initrd:generic
@@ -514,3 +501,5 @@ sendkey kp_enter
 #sendkey r
 #sendkey y
 #sendkey kp_enter
+
+#Script done, wait until vm has finished rf.sh script and follow instructions!
