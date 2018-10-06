@@ -235,7 +235,7 @@ esac
 
 }
 
-function all {
+function debian {
 fixsudo
 decswap
 bootfat
