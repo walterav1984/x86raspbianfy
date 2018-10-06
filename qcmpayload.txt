@@ -489,6 +489,12 @@ sendkey f
 sendkey dot
 sendkey s
 sendkey h
+sendkey spc
+sendkey m
+sendkey a
+sendkey k
+sendkey e
+sendkey i
 sendkey kp_enter
 #type sudo password
 #sendkey r
