@@ -7,7 +7,7 @@
 #partition in accessible FAT filesystem configurable with raspberry like text-
 #files for instance 'wpa_supplicant.conf' or 'ssh' and similar shipped packages.
 
-WHICHDISTRO=$(lsb_release -i | sed -e "s/Distributor ID:\t//")
+WHICHDISTRO=$(cat /etc/issue | sed "s| .*||" | egrep "Debian|Ubuntu")
 
 PERFORM=$1
 
@@ -181,8 +181,9 @@ chmod +x /home/pi/init_resize_rootfs.sh
 
 function x86raspbianrepo {
 echo "deb http://archive.raspberrypi.org/debian/ stretch main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
-curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o rrkey
-sudo cat rrkey | sudo apt-key add -
+curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o /tmp/rrkey
+sudo cat /tmp/rrkey | sudo apt-key add -
+sudo apt-get update
 }
 
 function raspbianliteslim {
