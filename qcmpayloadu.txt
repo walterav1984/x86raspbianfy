@@ -254,7 +254,6 @@ wait10
 sendkey kp_enter
 wait290
 #Kernel to install:linux-generic image/virtual?
-#STEPARCHDIFF
 sendkey kp_enter
 wait25
 #Drivers to include in the initrd:generic
