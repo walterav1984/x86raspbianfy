@@ -7,6 +7,8 @@
 #partition in accessible FAT filesystem configurable with raspberry like text-
 #files for instance 'wpa_supplicant.conf' or 'ssh' and similar shipped packages.
 
+WHICHDISTRO=$(lsb_release -i | sed -e "s/Distributor ID:\t//")
+
 PERFORM=$1
 
 function fixsudo {
@@ -19,18 +21,18 @@ echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 }
 
 function bootfat {
-SDA1UUID=$(sudo blkid | grep sda1 | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
 sudo apt-get -y install dosfstools
 cd /
 sudo cp -a boot boot.bak
 sudo umount /boot
 head /etc/fstab | sudo tee /etc/fstab
 sudo sed -i "s/errors=remount-ro/defaults,noatime/g" /etc/fstab
-echo "$SDA1UUID /boot vfat defaults 0 2" | sudo tee -a /etc/fstab
 sudo mkfs.msdos -n boot /dev/sda1
 printf "t\n1\nc\nw\nq\n" | sudo fdisk /dev/sda
 sleep 5
 sync
+SDA1UUID=$(sudo blkid | grep sda1 | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
+echo "$SDA1UUID /boot vfat defaults 0 2" | sudo tee -a /etc/fstab
 sudo mount -a
 cd /boot.bak
 sudo cp -a * /boot/
@@ -199,6 +201,40 @@ function personal {
 sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr #nmap
 }
 
+function vbgd {
+#virtualboxguestdkms
+
+#check architecture
+case $(uname -m) in
+x86_64)
+HEADERS=amd64
+;;
+i686)
+HEADERS=686
+;;
+esac
+
+#install packages depending on distro
+case $WHICHDISTRO in
+Debian)
+echo "deb http://ftp.debian.org/debian stretch-backports main non-free contrib" | sudo tee -a /etc/apt/sources.list
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade #otherwise kernel-headers will not be build for current new kernel
+sudo apt-get -y install dpkg-dev linux-headers-$HEADERS #backport installs headers for backport kernel?
+sudo apt-get -y install -t stretch-backports virtualbox-guest-dkms #installs headers new kernel?
+;;
+Ubuntu)
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
+sudo apt-get -y install dpkg-dev linux-headers-generic
+sudo apt-get -y install virtualbox-guest-dkms
+;;
+esac
+
+}
+
 function all {
 fixsudo
 decswap
@@ -234,6 +270,17 @@ raspbianliteslim
 resizescript
 x86tools
 personal
+}
+
+function makei {
+case $WHICHDISTRO in
+Debian)
+debian
+;;
+Ubuntu)
+ubuntu
+;;
+esac
 }
 
 $PERFORM
