@@ -7,6 +7,8 @@
 #partition in accessible FAT filesystem configurable with raspberry like text-
 #files for instance 'wpa_supplicant.conf' or 'ssh' and similar shipped packages.
 
+PERFORM=$1
+
 function fixsudo {
 echo "pi ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 sudo sed -i "s/%sudo/#%sudo/g" /etc/sudoers
@@ -17,13 +19,14 @@ echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 }
 
 function bootfat {
+SDA1UUID=$(sudo blkid | grep sda1 | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
 sudo apt-get -y install dosfstools
 cd /
 sudo cp -a boot boot.bak
 sudo umount /boot
 head /etc/fstab | sudo tee /etc/fstab
 sudo sed -i "s/errors=remount-ro/defaults,noatime/g" /etc/fstab
-echo "/dev/sda1 /boot vfat defaults 0 2" | sudo tee -a /etc/fstab
+echo "$SDA1UUID /boot vfat defaults 0 2" | sudo tee -a /etc/fstab
 sudo mkfs.msdos -n boot /dev/sda1
 printf "t\n1\nc\nw\nq\n" | sudo fdisk /dev/sda
 sleep 5
@@ -37,10 +40,11 @@ sudo rm -r /boot.bak
 }
 
 function grub2defaults {
+sudo sed -i 's/GRUB_HIDDEN_TIMEOUT=0/#GRUB_HIDDEN_TIMEOUT=0/g' /etc/default/grub
 sudo sed -i 's/=console/="console serial"/g' /etc/default/grub
-sudo sed -i 's/#GRUB_T/GRUB_T/g' /etc/default/grub
+sudo sed -i 's/#GRUB_TERMINAL/GRUB_TERMINAL/g' /etc/default/grub
 sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M"/g' /etc/default/grub
-sudo sed -i 's/"quiet"/""/g' /etc/default/grub
+sudo sed -i 's/"quiet.*/""/g' /etc/default/grub
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' | sudo tee -a /etc/default/grub
 sudo update-grub2
 }
@@ -48,26 +52,26 @@ sudo update-grub2
 function grub2uefi32 {
 sudo apt-get -y install -d -o=dir::cache=/var grub-efi-ia32
 sudo chmod -R 777 /var/archives
-dpkg -x /var/archives/grub-efi-ia32_2.02~beta3-5_*.deb /var/archives/grub-efi-ia32
-dpkg -x /var/archives/grub-efi-ia32-bin_2.02~beta3-5_*.deb /var/archives/grub-efi-ia32-bin
+dpkg -x /var/archives/grub-efi-ia32_*.deb /var/archives/grub-efi-ia32
+dpkg -x /var/archives/grub-efi-ia32-bin*.deb /var/archives/grub-efi-ia32-bin
 sudo cp -a '/var/archives/grub-efi-ia32-bin/usr/lib/grub/i386-efi' /usr/lib/grub/
 sudo grub-install --efi-directory=/boot/ --boot-directory=/boot/gre3 /dev/sda --target=i386-efi --no-nvram
 sudo grub-mkconfig -o /boot/gre3/grub/grub.cfg #is the same as bios version
 mkdir /boot/EFI/BOOT
-cp /boot/EFI/debian/grubia32.efi /boot/EFI/BOOT/BOOTIA32.efi
+cp /boot/EFI/*b*/grubia32.efi /boot/EFI/BOOT/BOOTIA32.efi
 sudo rm -r /var/archives/grub-efi*
 }
 
 function grub2uefi64 {
 sudo apt-get -y install -d -o=dir::cache=/var grub-efi-amd64
 sudo chmod -R 777 /var/archives
-dpkg -x /var/archives/grub-efi-amd64_2.02~beta3-5_*.deb /var/archives/grub-efi-amd64
-dpkg -x /var/archives/grub-efi-amd64-bin_2.02~beta3-5_*.deb /var/archives/grub-efi-amd64-bin
+dpkg -x /var/archives/grub-efi-amd64_*.deb /var/archives/grub-efi-amd64
+dpkg -x /var/archives/grub-efi-amd64-bin*.deb /var/archives/grub-efi-amd64-bin
 sudo cp -a '/var/archives/grub-efi-amd64-bin/usr/lib/grub/x86_64-efi' /usr/lib/grub/
 sudo grub-install --efi-directory=/boot/ --boot-directory=/boot/gre6 /dev/sda --target=x86_64-efi --no-nvram
 sudo grub-mkconfig -o /boot/gre6/grub/grub.cfg #is the same as bios version
 mkdir /boot/EFI/BOOT
-cp /boot/EFI/debian/grubx64.efi /boot/EFI/BOOT/BOOTX64.efi
+cp /boot/EFI/*b*/grubx64.efi /boot/EFI/BOOT/BOOTX64.efi
 sudo rm -r /var/archives/grub-efi*
 }
 
@@ -173,10 +177,16 @@ EOF
 chmod +x /home/pi/init_resize_rootfs.sh
 }
 
-function raspbianliteslim {
-sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils blends-tasks bzip2 cu dc device-tree-compiler distro-info-data ed fakeroot file firmware-atheros firmware-brcm80211 firmware-libertas hardlink htop info iw keyutils less man-db manpages ncdu netcat-openbsd netcat-traditional psmisc rsync strace unzip usb-modeswitch usbutils xml-core xz-utils #firmware-misc-nonfree firmware-realtek
+function x86raspbianrepo {
+echo "deb http://archive.raspberrypi.org/debian/ stretch main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
+curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o rrkey
+sudo cat rrkey | sudo apt-key add -
 }
-# firmware alters generic initrd behaviour check?
+
+function raspbianliteslim {
+sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils blends-tasks bzip2 cu dc device-tree-compiler distro-info-data ed fakeroot file firmware-atheros firmware-brcm80211 firmware-libertas hardlink htop info iw keyutils less man-db manpages ncdu netcat-openbsd netcat-traditional psmisc rsync strace unzip usb-modeswitch usbutils xml-core xz-utils firmware-misc-nonfree firmware-realtek
+}
+# "/etc/initramfs-tools/conf.d/driver-policy" MODULES=dep #forces targeted vs generic modules in init 
 
 #dphys-swapfile?
 #tobig apt-listchanges aptitude avahi-daemon bind9-host bluez build-essential cifs-utils cpp* dh-python gcc* g++ gdb iso-codes lsb-release nfs-common perl python samba-common
@@ -189,6 +199,7 @@ function personal {
 sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr #nmap
 }
 
+function all {
 fixsudo
 decswap
 bootfat
@@ -200,10 +211,32 @@ mkrclocal
 mksshswitch
 cmdlinetxt
 keyboardlang
+x86raspbianrepo
 raspbianliteslim
 resizescript
 x86tools
 personal
+}
+
+function ubuntu {
+fixsudo
+decswap
+bootfat
+grub2defaults
+grub2uefi32
+grub2uefi64
+autonetconf
+#mkrclocal
+mksshswitch
+cmdlinetxt
+keyboardlang
+raspbianliteslim
+resizescript
+x86tools
+personal
+}
+
+$PERFORM
 
 #sudo poweroff;exit
 echo "All Done, gracefully shutdown vmguest 'sudo poweroff;exit' to use image"
