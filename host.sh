@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# host.sh 'action' 'distro' 'architecture' 'fixed imgsize'
+# host.sh 'distro' 'architecture' 'imgsize in megabytes numbers'
 #
 #Its pretty obvious what happens here, but it installs qemu, downloads an iso 
 #creates a xGB diskimage for the virtualmachine starts the virtualmachine with
@@ -14,18 +14,6 @@ DISTRO=$2
 
 #third argument defines architecture
 IARCH=$3
-
-QARCH=$(case $3 in
-i386)
-echo "i386"
-OVBARCH=""
-;;
-amd64)
-echo "x86_64"
-OVBARCH="_64"
-;;
-esac
-)
 
 #fourth argument defines fixed img size of 1GB / 2GB
 #2gb or larger installs default utils during install and raspbian-litefull vs slim package selection?
@@ -52,15 +40,27 @@ echo "9364"
 esac
 )
 
-#distro/arch dependent variables
+#arch dependent variables
+case $IARCH in
+i386)
+QARCH="i386"
+OVBARCH=""
+;;
+amd64)
+QARCH="x86_64"
+OVBARCH="_64"
+;;
+esac
+
+#distro&arch dependent variables
 case $DISTRO in
 debian)
 QCMPAYLOAD=qcmpayloadd.txt
-OVBOSTYPE=Debian$OVBARCH
+OVBOSTYPE="Debian$OVBARCH"
 ;;
 ubuntu)
 QCMPAYLOAD=qcmpayloadu.txt
-OVBOSTYPE=Ubuntu$OVBARCH
+OVBOSTYPE="Ubuntu$OVBARCH"
 ;;
 esac
 
@@ -103,12 +103,11 @@ QCMPAYLOAD=qcmpayload-covb.txt
 sudo qemu-system-$QARCH -enable-kvm -drive format=raw,file=disk-$DISTRO-$IARCH-$DSIZE.img -cdrom $DISO -boot c -m 512 -monitor telnet:localhost:$TPORT,server,nowait & #-device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
 sleep 10
 ./host2guest.sh $QCMPAYLOAD $TPORT $IARCH
-sleep 300
 #sleep wait or continue after host2guest finish? 
+
 #convert current image to vbox appliance
 #VirtualBox VM NAME
 OVMN=$DISTRO-$IARCH-$DSIZE
-
 VBoxManage convertfromraw disk-$DISTRO-$IARCH-$DSIZE.img --format vdi $OVMN.vdi
 #modifymedium vdi --resize mb ?
 #modifyhds ?
@@ -118,8 +117,8 @@ VBoxManage storageattach $OVMN --storagectl "SATA Controller" --port 0 --device 
 VBoxManage modifyvm $OVMN --memory 512 #default 128/512 ok
 VBoxManage modifyvm $OVMN --nic2 bridged --bridgeadapter2 enp1s0 #/ e1000g0 dhcp mac? --macaddress
 #VBoxManage modifyvm $OVMN --macaddress2 AABBCCDDEEFF
-vboxmanage export $OVMN -o $OVMN-vbox-appliance.ova
-#remove vbox vdi & active appliance / ova file?
+VBoxManage export $OVMN -o $OVMN-vbox-appliance.ova
+#VBoxManage unregistervm $OVMN --delete
 }
 
 $XACT
