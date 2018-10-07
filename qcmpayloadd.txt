@@ -1,71 +1,95 @@
 #qemuconsolemonitorpayload.txt
 
-#Debian 9 i386/amd64 GNU/Linux installer boot menu
+#ubuntu 16.04 i386/amd64 Installer boot menu
 sendkey down
 sendkey down
 sendkey kp_enter
 #Advanced Options
-sendkey down 
 sendkey down
-sendkey down
-sendkey down
+#Expert Install
 sendkey kp_enter 
 wait20
 
-#choose language
+#Choose language
 sendkey kp_enter
 #English
 sendkey kp_enter
-#United Kingdom
+#United Kingdom country
 sendkey up
 sendkey kp_enter
-#United Kingdom en_GB.UTF-8
+#Country to default base United Kingdom en_GB.UTF-8
 sendkey kp_enter
 #Additional locales
 sendkey tab
 sendkey kp_enter
+#Select the default local
+sendkey kp_enter
 
-#Configure the keyboard
+#Configure the keyboard skip blind
 sendkey down
 sendkey kp_enter
-#British English
+#Detect Keyboard layout? <NO>
 sendkey kp_enter
-#Detect and mount CD-ROM
+#Country of origin... <English (UK)>
 sendkey kp_enter
-#Continue
-wait5
+#Keyboard layour: <English (UK)>
 sendkey kp_enter
-
-#Load installer components from CD
-sendkey kp_enter
-sendkey tab
-sendkey kp_enter
-wait60
 
 #Detect network hardware
 sendkey kp_enter
-wait5
+#module
+sendkey kp_enter
 
 #Configure the network
 sendkey kp_enter
-#Auto-configure networking Yes
+#VLAN trunkport? <NO>
 sendkey kp_enter
+#Auto-configure networking? <YES>
 sendkey kp_enter
-wait10
+#Waiting time
+wait3
+sendkey 0
+sendkey kp_enter
+wait33
+#Hostname:
+sendkey kp_enter
+#Domain name:
+sendkey kp_enter
 
-#Hostname
+#Choose a mirror of the Ubuntu archive
 sendkey kp_enter
-#Domainname
+#Protocol for file downloads: <HTTP>
 sendkey kp_enter
+#Ubuntu archive mirror country: <United Kingdom>
+sendkey kp_enter
+#Ubuntu archive mirror: <gb.archive.ubuntu.com>
+sendkey kp_enter
+#HTTP proxy info...
+sendkey kp_enter
+
+#Download installer components
+sendkey kp_enter
+wait15
+#Installer components to load:
+sendkey tab
+sendkey kp_enter
+wait140
+
+#Detect virtual driver disks from hardware manufacturer?
+sendkey down
+sendkey down
+sendkey down
+sendkey down 
+sendkey down
 
 #Set up users and passwords
 sendkey kp_enter
+
 #enable Shadow passwords? <Yes>
 sendkey kp_enter
 #Allow login as root? <No>
-sendkey tab
 sendkey kp_enter
-#Full name <Continue>
+#Full name for the new user<Continue>
 sendkey p
 sendkey i
 sendkey kp_enter
@@ -93,13 +117,20 @@ sendkey r
 sendkey r
 sendkey y
 sendkey kp_enter
+#Encrypt your home directory? <No>
+sendkey kp_enter
 wait5
+
 
 #Configure the clock
 sendkey kp_enter
 #Set the clock using NTP? <Yes>
 sendkey kp_enter
+wait10
 #NTP server to use:0.debian.pool.ntp.org
+sendkey kp_enter
+#Is this time zone correct?
+sendkey tab
 sendkey kp_enter
 #Select yout time zone: Coordinated Universal Time (UTC)
 sendkey down
@@ -220,91 +251,84 @@ wait10
 
 #Install the base system
 sendkey kp_enter
-wait275
-#Kernel to install:linux-image-686 / remove sendkey up for amd64!
+wait290
+#Kernel to install:linux-generic image/virtual?
 #STEPARCHDIFF
 sendkey kp_enter
 wait25
 #Drivers to include in the initrd:generic
 sendkey kp_enter
-wait120
+wait300
 
 #Configure the package manager
 sendkey kp_enter
 wait5
-#Scan another CD or DVD? <No>
+#Use restricted software? <Yes>
 sendkey kp_enter
 wait5
-#Use a network mirror? <Yes>
+#"Universe" component? <Yes>
 sendkey kp_enter
-#Protocol for file downloads:http
+#"Multiverse" component? <Yes>
 sendkey kp_enter
-#Debian archive mirror country:United Kingdom
+#Use backported software? <No>
+sendkey tab
 sendkey kp_enter
-#Debian archive mirror:deb.debian.org
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey kp_enter
-#HTTP proxy information (blank for none):?
-sendkey kp_enter
-wait10
-#Use non-free software?<Yes>
+#"partner" repository? <Yes>
 sendkey tab
 sendkey tab
 sendkey kp_enter
-wait5
-#Enable source repositories in APT?<No>
-sendkey tab
+#Enable source repo? <No>
 sendkey kp_enter
-wait45
+wait90
 #Services to use:   	
 sendkey tab
 sendkey kp_enter
-wait15
+wait10
 
 #Select and install software
 sendkey kp_enter
-wait140
-#Participate in the package usage survey? <No>
+wait230
+#Manage Upgrades on this system? <No automatic updates>
 sendkey kp_enter
-wait25
-#Choose software to install:
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
-sendkey down
+wait90
+#Choose software to install: down 16x
 sendkey spc
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
 sendkey down
 sendkey spc
 #STEPPSELDIFF
 sendkey tab
 sendkey kp_enter
-wait35
+wait180
 
 #Install GRUB boot loader
 sendkey kp_enter
-wait40
+wait45
 #Install the GRUB boot loader to the master boot record?<Yes>
 sendkey kp_enter
 #Device for boot loader installation:/dev/sda
-sendkey down
 sendkey kp_enter
 #Force GRUB installtion to the EFI remoavle media path?<No>
 sendkey kp_enter
-wait25
+wait20
 
 #Finish the installation
 sendkey kp_enter
-wait30
+wait25
 #Is the system clock set to UTC? <Yes>
 sendkey kp_enter
 wait10
@@ -316,8 +340,14 @@ wait10
 #ejecting Debian Installer cdrom
 eject ide1-cd0
 system_reset
+sendkey shift_r
+sendkey shift
+system_reset
+sendkey kp_enter
+#system_reset
+#reset during boot forces grub2 menu/kms/drm ok? quite/splash
 #rebooting...
-wait40
+wait90
 
 #debian login:
 sendkey p
