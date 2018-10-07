@@ -1,7 +1,6 @@
 #qemuconsolemonitorpayload.txt
-#Ubuntu 16.04 mini iso i686/amd64
 
-#ubuntu Installer boot menu
+#ubuntu 1604 i386/amd64 Installer boot menu
 sendkey down
 sendkey down
 sendkey kp_enter
@@ -177,7 +176,7 @@ sendkey backspace
 sendkey backspace
 sendkey backspace
 sendkey backspace
-sendkey 1
+#STEPSIZEDIFF
 sendkey 0
 sendkey 0
 sendkey kp_enter
@@ -254,6 +253,7 @@ wait10
 sendkey kp_enter
 wait290
 #Kernel to install:linux-generic image/virtual?
+#STEPARCHDIFF
 sendkey kp_enter
 wait25
 #Drivers to include in the initrd:generic
@@ -291,9 +291,26 @@ wait230
 #Manage Upgrades on this system? <No automatic updates>
 sendkey kp_enter
 wait90
-#Choose software to install:16x
-#sendkey down 16x
-#sendkey spc
+#Choose software to install: down 16x
+sendkey spc
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey spc
+#STEPPSELDIFF
 sendkey tab
 sendkey kp_enter
 wait180
@@ -508,7 +525,7 @@ sendkey m
 sendkey a
 sendkey k
 sendkey e
-sendkey i
+#STEPSIZEDIFF
 sendkey kp_enter
 #type sudo password
 #sendkey r
