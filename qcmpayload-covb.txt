@@ -1,0 +1,61 @@
+#qemuconsolemonitorpayload.txt
+#enhance qemu guest with oracle virtualbox guest dkms
+
+#booting...
+wait60
+
+#login:
+sendkey p
+sendkey i
+sendkey kp_enter
+#Password: 
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait10
+
+#execute x86raspbianfy script
+sendkey s
+sendkey u
+sendkey d
+sendkey o
+sendkey spc
+sendkey dot
+sendkey slash
+sendkey r
+sendkey f
+sendkey dot
+sendkey s
+sendkey h
+sendkey spc
+sendkey c
+sendkey o
+sendkey v
+sendkey b
+sendkey kp_enter
+#check needed time?
+wait300
+
+#shutdown vm
+sendkey s
+sendkey u
+sendkey d
+sendkey o
+sendkey spc
+sendkey p
+sendkey o
+sendkey w
+sendkey e
+sendkey r
+sendkey o
+sendkey f
+sendkey f
+sendkey kp_enter
+#Script done, wait until vm has finished rf.sh script and follow instructions!
