@@ -11,18 +11,24 @@ If your 'arm' cpu based raspbian pi project won't cut it performance wise, or la
 Another reason for this project is that AdaFruit Read Only Raspbian system modification script https://learn.adafruit.com/read-only-raspberry-pi/overview also has been confirmed working on debian stretch i686 making x86 attractive again for simple embedded power-cut/outage usecases.
 Finally its 2018 and no time should be wasted on the installing-phase of a OS especially on old, slow hardware with lacking/slow usb or buggy optical drive boot. Just image, connect to ssh, keyboard&monitor or even serialconsole and instantly start.
 
-## How it works?
-There are 4 scripts and around 1,5GB in diskspace and a active internet connection for the host and vmguest is needed. The 'host.sh' prepares the vmhost in this case ubuntu 18.04.1 amd64 desktop for qemu-kvm usage by installing qemu and creating a 1GB vmguest disk and download "debian-9.5.0-i386-netinst.iso" (~400MB) and initiate the vmguest with telnet console monitor capabilities.
-After the guest machine started, the first script will run the 'host2guest.sh' script which uses 'qcmpayload.txt' for qemu console monitor scripted input via a telnet session. This whole automation takes control for installing the OS into the vmguest and after OS install will run the neccesary steps to mimic raspbian behaviour by running the 'rf.sh' script inside the vmguest.
+## Requirments
+There are 2 bash scripts(+qemu payload files) and around 2GB in diskspace and a active internet connection(~15MBit) for the host and vmguest is needed, for creating a 1GB image.
 
-After ~45 minutes(hardcoded time), there will be a < 1GB 'disk1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
+## How it works?
+The 'host.sh' script prepares the vmhost in this case ubuntu 18.04.1 amd64 desktop for qemu-kvm usage by installing qemu, virtualbox and downloading debian and ubuntu OS installation iso files. Following 'host.sh' creates a disk img and mounts corresponding OS install iso while initiating the vmguest with telnet console monitor capabilities.
+After the guest machine started, the 'host2guest.sh' script will run which uses 'qcmpayload.txt' for qemu console monitor scripted input via a telnet session. This whole automation takes control for installing the OS into the vmguest and after OS install will run the neccesary steps to mimic raspbian behaviour by running the 'rf.sh' script inside the vmguest.
+
+After ~45 minutes(hardcoded time), there will be a < 1GB 'disk-distro-arch-1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
 
 ## Start?
 Download/clone this github repo and run the 'host.sh' script with 2 arguments one for architecture (i386/amd64) and the second for imgsize(MegaBytes) on a ubuntu 18.04 amd64(32bit may work) desktop, after typing your sudo password let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
 
 ```
 chmod +x *.sh #makes the scripts executable
-./host.sh i386 1024 #asks for sudo and will run for ~45 minutes
+./host.sh prepare #install qemu&virtualbox and debian/ubuntu guest OS install isos
+./host.sh create debian i386 1GB #asks for sudo and will run for ~45 minutes
+./host.sh modify ubuntu amd64 2GB 
+./host.sh convertovb ubuntu amd64 2GB #Converts the img to a Oracle VirtualBox OVA appliance
 ```
 
 After imaging and running the image on bare metal target system its a good start to change the timezone and expand the rootfs or change password. Before that it may be wise to setup ssh or wpa_supplicant just follow raspbian documentation:
@@ -33,9 +39,10 @@ sudo ./init_resize_rootfs.sh #expands rootfs to max bare metal disk and reboots
 ``` 
 
 ## TODO's
-- dhcpcd static ip
+- complete raspbianlite full package selection
+- optimize boot/rootfs partitionsize / freespace
+- dhcpcd static ip see roraspbiankodi
 - adafruit readonly script adds to cmdline.txt instead of grub "fastboot noswap ro"
-- compare initrd (generic) before/after additonal firmware?
 
 ## Links
 - [qemu console monitor scripting telnet](https://stackoverflow.com/questions/33362322/how-in-qemu-send-mouse-move-mouse-button-sendkey-via-some-api)
