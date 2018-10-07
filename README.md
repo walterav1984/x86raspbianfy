@@ -21,14 +21,19 @@ After the guest machine started, the 'host2guest.sh' script will run which uses 
 After ~45 minutes(hardcoded time), there will be a < 1GB 'disk-distro-arch-1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
 
 ## Start?
-Download/clone this github repo and run the 'host.sh' script with 2 arguments one for architecture (i386/amd64) and the second for imgsize(MegaBytes) on a ubuntu 18.04 amd64(32bit may work) desktop, after typing your sudo password let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
+Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 amd64(32bit may work) desktop with 4 arguments:
+* first for action (prepare/create/modify/convertovb) 
+* second for distro (debian/ubuntu)
+* third for architecture (i386/amd64)
+* fourth for fixed imgsizes in GigaBytes (1GB/2GB)
+After typing your sudo password(hurry) let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
 
 ```
 chmod +x *.sh #makes the scripts executable
 ./host.sh prepare #install qemu&virtualbox and debian/ubuntu guest OS install isos
 ./host.sh create debian i386 1GB #asks for sudo and will run for ~45 minutes
-./host.sh modify ubuntu amd64 2GB 
-./host.sh convertovb ubuntu amd64 2GB #Converts the img to a Oracle VirtualBox OVA appliance
+./host.sh modify ubuntu amd64 2GB #no qemu payload, just modify the guest manually from the screen/keyboard
+./host.sh convertovb ubuntu amd64 2GB #converts the img to a Oracle VirtualBox OVA appliance "needs testing"
 ```
 
 After imaging and running the image on bare metal target system its a good start to change the timezone and expand the rootfs or change password. Before that it may be wise to setup ssh or wpa_supplicant just follow raspbian documentation:
