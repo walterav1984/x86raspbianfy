@@ -194,10 +194,13 @@ sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils 
 function raspbianlitefull {
 #dphys-swapfile?
 sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
 sudo apt-get clean
 sudo apt-get autoremove
 #sudo apt-get -y install ... 
 #tobig apt-listchanges aptitude avahi-daemon bind9-host bluez build-essential cifs-utils cpp* dh-python gcc* g++ gdb iso-codes lsb-release nfs-common perl python samba-common
+}
 
 function x86tools {
 sudo apt-get -y install pcmciautils lsscsi memtest86+ #amd64/intel microcode?
