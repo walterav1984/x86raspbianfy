@@ -1,6 +1,6 @@
 #qemuconsolemonitorpayload.txt
 
-#Debian GNU/Linux installer boot menu
+#Debian 9 i386/amd64 GNU/Linux installer boot menu
 sendkey down
 sendkey down
 sendkey kp_enter
@@ -145,7 +145,7 @@ sendkey backspace
 sendkey backspace
 sendkey backspace
 sendkey backspace
-sendkey 1
+#STEPSIZEDIFF
 sendkey 0
 sendkey 0
 sendkey kp_enter
@@ -285,6 +285,7 @@ sendkey down
 sendkey spc
 sendkey down
 sendkey spc
+#STEPPSELDIFF
 sendkey tab
 sendkey kp_enter
 wait35
@@ -494,7 +495,7 @@ sendkey m
 sendkey a
 sendkey k
 sendkey e
-sendkey i
+#STEPSIZEDIFF
 sendkey kp_enter
 #type sudo password
 #sendkey r
