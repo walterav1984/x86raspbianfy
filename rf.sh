@@ -191,7 +191,12 @@ sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils 
 }
 # "/etc/initramfs-tools/conf.d/driver-policy" MODULES=dep #forces targeted vs generic modules in init 
 
+function raspbianlitefull {
 #dphys-swapfile?
+sudo apt-get update
+sudo apt-get clean
+sudo apt-get autoremove
+#sudo apt-get -y install ... 
 #tobig apt-listchanges aptitude avahi-daemon bind9-host bluez build-essential cifs-utils cpp* dh-python gcc* g++ gdb iso-codes lsb-release nfs-common perl python samba-common
 
 function x86tools {
@@ -202,8 +207,9 @@ function personal {
 sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr #nmap
 }
 
-function vbgd {
+function covb {
 #virtualboxguestdkms
+#remove older kernel/init to save space for updating newer/current kernel with vbox guest modules?
 
 #check architecture
 case $(uname -m) in
@@ -224,6 +230,7 @@ sudo apt-get -y upgrade
 sudo apt-get -y dist-upgrade #otherwise kernel-headers will not be build for current new kernel
 sudo apt-get -y install dpkg-dev linux-headers-$HEADERS #backport installs headers for backport kernel?
 sudo apt-get -y install -t stretch-backports virtualbox-guest-dkms #installs headers new kernel?
+sudo poweroff;exit
 ;;
 Ubuntu)
 sudo apt-get update
@@ -231,6 +238,7 @@ sudo apt-get -y upgrade
 sudo apt-get -y dist-upgrade
 sudo apt-get -y install dpkg-dev linux-headers-generic
 sudo apt-get -y install virtualbox-guest-dkms
+sudo poweroff;exit
 ;;
 esac
 
@@ -273,13 +281,26 @@ x86tools
 personal
 }
 
-function makei {
+function make1 {
 case $WHICHDISTRO in
 Debian)
 debian
 ;;
 Ubuntu)
 ubuntu
+;;
+esac
+}
+
+function make2 {
+case $WHICHDISTRO in
+Debian)
+debian
+raspbianlitefull
+;;
+Ubuntu)
+ubuntu
+raspbianlitefull
 ;;
 esac
 }
