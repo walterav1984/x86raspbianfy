@@ -39,6 +39,7 @@ sudo cp -a * /boot/
 sudo grub-install /dev/sda --boot-directory=/boot
 sudo update-grub2
 sudo rm -r /boot.bak
+sudo sed -i "s/do_symlinks = yes/do_symlinks = no/g" /etc/kernel-img.conf
 }
 
 function grub2defaults {
