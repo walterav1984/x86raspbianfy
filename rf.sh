@@ -165,14 +165,22 @@ sudo ln -s /boot/keyboard /etc/default/keyboard
 }
 
 function resizescript {
-sudo apt-get -y install parted
+sudo apt-get -y install parted blktool
 tee /home/pi/init_resize_rootfs.sh <<EOF
 #!/bin/bash
+
+ROOTUUID=$(cat /etc/fstab | grep ext4 | grep -v "#" |sed -e 's| /.*|"|' | sed 's|=|="|' )
+
+SIZEDISK=$(sudo blkid | grep $ROOTUUID | sed -e  's|2:.*||')
+SIZEPART=$(sudo blkid | grep $ROOTUUID | sed -e  's|:.*||')
+
 sync
-echo "Run this script as sudo in case it says command not found"
-parted /dev/sda resizepart 2 y 100%
+echo "Check if the disk and partition below are the correct ones to resize?"
+echo $SIZEDISK $SIZEPART
+echo "Than run this script with sudo in case it says command not found!"
+parted $SIZEDISK resizepart 2 y 100%
 sync
-resize2fs /dev/sda2
+resize2fs $SIZEPART
 sync
 reboot
 EOF
@@ -203,11 +211,11 @@ sudo apt-get autoremove
 }
 
 function x86tools {
-sudo apt-get -y install pcmciautils lsscsi memtest86+ #amd64/intel microcode?
+sudo apt-get -y install pcmciautils lsscsi memtest86+ #intel-microcode amd64-microcode lm-sensors smartmontools util-linux
 }
 
 function personal {
-sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr #nmap
+sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr software-properties-common #nmap
 }
 
 function covb {
