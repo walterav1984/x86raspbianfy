@@ -46,7 +46,7 @@ function grub2defaults {
 sudo sed -i 's/GRUB_HIDDEN_TIMEOUT=0/#GRUB_HIDDEN_TIMEOUT=0/g' /etc/default/grub
 sudo sed -i 's/=console/="console serial"/g' /etc/default/grub
 sudo sed -i 's/#GRUB_TERMINAL/GRUB_TERMINAL/g' /etc/default/grub
-sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M"/g' /etc/default/grub
+sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M #vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0"/g' /etc/default/grub
 sudo sed -i 's/"quiet.*/""/g' /etc/default/grub
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' | sudo tee -a /etc/default/grub
 sudo update-grub2
@@ -157,17 +157,25 @@ sudo tee /boot/cmdline.txt <<EOF
 # for temp.editing kernel boot time parameters on the fly. Although these edits
 # will be overwritten by system updates so permanent edits need to be done at
 # /etc/default/grub and /etc/grub.d/*.
+#
+# https://github.com/walterav1984/x86raspbianfy
 EOF
 }
 
 function keyboardlang {
-sudo mv /etc/default/keyboard /boot
+sudo mv /etc/default/keyboard /boot/
 sudo ln -s /boot/keyboard /etc/default/keyboard
 }
 
+function dhcpcdconfig {
+sudo cp /etc/dhcpcd.conf /boot/
+sudo rm /etc/dhcpcd.conf
+sudo ln -s /boot/dhcpcd.conf /etc/dhcpcd.conf
+}
+
 function resizescript {
-sudo apt-get -y install parted blktool
-tee /home/pi/init_resize_rootfs.sh <<EOF
+sudo apt-get -y install parted mtools blktool --no-install-recommends
+cat <<'EOF' > /home/pi/init_resize_rootfs.sh
 #!/bin/bash
 
 ROOTUUID=$(cat /etc/fstab | grep ext4 | grep -v "#" |sed -e 's| /.*|"|' | sed 's|=|="|' )
@@ -185,7 +193,51 @@ resize2fs $SIZEPART
 sync
 reboot
 EOF
+
 chmod +x /home/pi/init_resize_rootfs.sh
+
+cat <<'EOF' > /home/pi/init_change_uuids.sh
+#!/bin/bash
+
+#only works on Ubuntu? Debian needs metadata_csum_seed incompatible grub osprober/10_linux? 
+#sudo debconf-show grub-p
+#sudo grub-probe --target=fs --device /dev/sdaX
+#sudo blkid
+#sudo mlabel -s -i /dev/sda1
+
+ORIBUUID=$(cat /etc/fstab | grep vfat | sed 's|/.*||' | sed 's|.*=||')
+ORIRUUID=$(cat /etc/fstab | grep ext4 | sed 's|/.*||' | sed 's|.*=||')
+echo $ORIBUUID 
+echo $ORIRUUID
+
+BDEVPART=$(sudo blkid | grep $ORIBUUID | sed 's|:.*||')
+RDEVPART=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||')
+
+echo $BDEVPART
+echo $RDEVPART
+#sudo tune2fs /dev/sda -U random -O metadata_csum_seed breaks grub os-prober/10-linux
+sudo tune2fs -O ^uninit_bg $RDEVPART
+#sudo tune2fs -U $uuid $root_disk
+sudo tune2fs $RDEVPART -U random
+sudo tune2fs -O +uninit_bg $RDEVPART
+RREPUUID=$(sudo blkid | grep $RDEVPART | sed 's|.*" UUID="||' | sed 's|" TYPE.*| |')
+echo $RREPUUID
+sudo sed -i "s|$ORIRUUID|$RREPUUID|" /etc/fstab
+
+echo mtools_skip_check=1 > /home/pi/.mtoolsrc
+chown pi:pi /home/pi/.mtoolsrc
+sudo cp /home/pi/.mtoolsrc /root/
+sudo umount /boot
+sudo mlabel -n -i $BDEVPART ::boot
+BREPUUID=$(sudo blkid | grep $BDEVPART | sed 's|.*" UUID="||' | sed 's|" TYPE.*| |')
+echo $BREPUUID
+sudo sed -i "s|$ORIBUUID|$BREPUUID|" /etc/fstab
+sudo mount /boot
+sync
+sudo update-grub2
+EOF
+
+chmod +x /home/pi/init_change_uuids.sh
 }
 
 function x86raspbianrepo {
@@ -196,7 +248,18 @@ sudo apt-get update
 }
 
 function raspbianliteslim {
-sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils blends-tasks bzip2 cu dc device-tree-compiler distro-info-data ed fakeroot file firmware-atheros firmware-brcm80211 firmware-libertas hardlink htop info iw keyutils less man-db manpages ncdu netcat-openbsd netcat-traditional psmisc rsync strace unzip usb-modeswitch usbutils xml-core xz-utils firmware-misc-nonfree firmware-realtek
+case $WHICHDISTRO in
+Debian)
+DEBIANONLY="blends-tasks firmware-atheros firmware-brcm80211 firmware-libertas firmware-misc-nonfree firmware-realtek"
+;;
+Ubuntu)
+DEBIANONLY=""
+;;
+esac
+
+sudo apt-get clean
+sudo apt-get -y install alsa-utils apt-transport-https bash-completion binutils bzip2 cu dc device-tree-compiler distro-info-data ed fakeroot file hardlink htop info iw keyutils less man-db manpages ncdu netcat-openbsd netcat-traditional psmisc rsync strace unzip usb-modeswitch usbutils xml-core xz-utils $DEBIANONLY  
+sudo apt-get clean
 }
 # "/etc/initramfs-tools/conf.d/driver-policy" MODULES=dep #forces targeted vs generic modules in init 
 
@@ -212,11 +275,11 @@ sudo apt-get autoremove
 }
 
 function x86tools {
-sudo apt-get -y install pcmciautils lsscsi memtest86+ #intel-microcode amd64-microcode lm-sensors smartmontools util-linux
+sudo apt-get -y install pcmciautils lsscsi memtest86+ util-linux intel-microcode amd64-microcode #lm-sensors smartmontools
 }
 
 function personal {
-sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp dirmngr software-properties-common #nmap
+sudo apt-get -y install vlan netcat iperf tcpdump minicom tftp lftp #dirmngr software-properties-common --no-install-recommends #nmap
 }
 
 function covb {
@@ -268,6 +331,7 @@ mkrclocal
 mksshswitch
 cmdlinetxt
 keyboardlang
+dhcpcdconfig
 x86raspbianrepo
 raspbianliteslim
 resizescript
@@ -287,6 +351,7 @@ autonetconf
 mksshswitch
 cmdlinetxt
 keyboardlang
+dhcpcdconfig
 raspbianliteslim
 resizescript
 x86tools
