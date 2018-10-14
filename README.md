@@ -2,7 +2,7 @@
 It's just a script to create a <1GB Debian Stretch image for x86(i686-nonpae) based pc/notebook/embedded hardware, but mimicking raspbian-lite(raspberry pi OS) behaviour in the sense and ease of imaging, disklayout and setup connectivity. It will be created in full non-interactive automation using qemu delivering a raw image file.
 
 ## Features
-For example 'ssh' service can be enabled by creating a file named "ssh" on the boot partition, also wifi can be configured by adding a file "wpa_supplicant.conf" there and other ethernet adapters can be connected without the need to configure them first in /etc/network/interfaces (when using dhcp). Like a raspbian-lite image the 'boot' partition is FAT based for easy editing by other OS and comes loaded with Grub2(BIOS&UEFI-ia32/x64) configured for both VGA or Serial Console(115200) based booting. In addition it also comes with a '(boot)/keyboard' file in which you can change layout from UK to US. The 'rootfs' partition can be easily expanded with a simple buildin resize script. The 'sudo' command has been configured to require no password, but it is required to type 'sudo' for all system related commands(intended). Just like raspbian-lite it also comes with /etc/rc.local working. Because of the size restrictions < 1GB it comes with less tools than raspbian-lite but hopefully enough to get you started.
+For example 'ssh' service can be enabled by creating a file named "ssh" on the boot partition, also wifi can be configured by adding a file "wpa_supplicant.conf" there and other ethernet adapters can be connected without the need to configure them first in /etc/network/interfaces (when using dhcp) see "dhcpcd.conf". Like a raspbian-lite image the 'boot' partition is FAT based for easy editing by other OS and comes loaded with Grub2(BIOS&UEFI-ia32/x64) configured for both VGA or Serial Console(115200) based booting. In addition it also comes with a '(boot)/keyboard' file in which you can change layout from UK to US. The 'rootfs' partition can be easily expanded with a simple buildin resize script. The 'sudo' command has been configured to require no password, but it is required to type 'sudo' for all system related commands(intended). Just like raspbian-lite it also comes with /etc/rc.local working. Because of the size restrictions < 1GB it comes with less tools than raspbian-lite but hopefully enough to get you started.
 
 It also has similar quirks as raspbian-lite like its keyboardlayout/timezone are by default UK/UTC and locals are "en_GB.UTF-8". This is still intended to stay as close to raspbian-lite in sense of minimizing differences. It also complains like raspbian about FAT boot partition not being able to handle linking, it lacks optimization for 64bit support like raspbian but it still compatible with 64 bit systems and its bootloaders. 
 
@@ -12,11 +12,11 @@ Another reason for this project is that AdaFruit Read Only Raspbian system modif
 Finally its 2018 and no time should be wasted on the installing-phase of a OS especially on old, slow hardware with lacking/slow usb or buggy optical drive boot. Just image, connect to ssh, keyboard&monitor or even serialconsole and instantly start.
 
 ## Requirments
-There are 2 bash scripts(+qemu payload files) and around 2GB in diskspace and a active internet connection(~15MBit) for the host and vmguest is needed, for creating a 1GB image.
+There are 3 bash scripts(+qemu payload files) and around 2GB in diskspace and a active internet connection(~15MBit) for the host and vmguest is needed when creating a 1GB image.
 
 ## How it works?
 The 'host.sh' script prepares the vmhost in this case ubuntu 18.04.1 amd64 desktop for qemu-kvm usage by installing qemu, virtualbox and downloading debian and ubuntu OS installation iso files. Following 'host.sh' creates a disk img and mounts corresponding OS install iso while initiating the vmguest with telnet console monitor capabilities.
-After the guest machine started, the 'host2guest.sh' script will run which uses 'qcmpayload.txt' for qemu console monitor scripted input via a telnet session. This whole automation takes control for installing the OS into the vmguest and after OS install will run the neccesary steps to mimic raspbian behaviour by running the 'rf.sh' script inside the vmguest.
+After the guest machine started, the 'host2guest.sh' script uses 'qcmpayload.txt' and runs between host and vmguest via qemu console monitor(telnet) injecting scripted input. This whole automation takes control for installing the OS into the vmguest and after OS install will run the neccesary steps to mimic raspbian behaviour by running the 'rf.sh' script inside the vmguest.
 
 After ~45 minutes(hardcoded time), there will be a < 1GB 'disk-distro-arch-1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
 
@@ -26,6 +26,7 @@ Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 a
 * second for distro (debian/ubuntu)
 * third for architecture (i386/amd64)
 * fourth for fixed imgsizes in GigaBytes (1GB/2GB)
+
 After typing your sudo password(hurry) let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
 
 ```
@@ -46,7 +47,9 @@ sudo ./init_resize_rootfs.sh #expands rootfs to max bare metal disk and reboots
 ## TODO's
 - complete raspbianlite full package selection
 - optimize boot/rootfs partitionsize / freespace
-- dhcpcd static ip see roraspbiankodi
+- correctly check for sudo
+- fix uuid change on debian
+- add option to replace grub-pc by making grub-efi(including nvram variables) permanent
 - adafruit readonly script adds to cmdline.txt instead of grub "fastboot noswap ro"
 
 ## Links
