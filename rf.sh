@@ -240,6 +240,13 @@ EOF
 chmod +x /home/pi/init_change_uuids.sh
 }
 
+function removeswap {
+#ubuntu 18.04 mini install comes with a swapfile...
+sudo swapoff -a
+sudo rm /swapfile
+sudo sed -i '|/swapfile|#/swapfile|' /etc/fstab
+}
+
 function x86raspbianrepo {
 echo "deb http://archive.raspberrypi.org/debian/ stretch main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
 curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o /tmp/rrkey
@@ -340,6 +347,7 @@ personal
 }
 
 function ubuntu {
+removeswap
 fixsudo
 decswap
 bootfat
@@ -377,7 +385,7 @@ raspbianlitefull
 ;;
 Ubuntu)
 ubuntu
-raspbianlitefull
+#raspbianlitefull
 ;;
 esac
 }
