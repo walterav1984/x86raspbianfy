@@ -24,17 +24,18 @@ After ~45 minutes(hardcoded time), there will be a < 1GB 'disk-distro-arch-1GB.i
 Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 amd64(32bit may work) desktop with 4 arguments:
 * first for action (prepare/create/modify/convertovb) 
 * second for distro (debian/ubuntu)
-* third for architecture (i386/amd64)
-* fourth for fixed imgsizes in GigaBytes (1GB/2GB)
+* third for release codename(stretch/xenial)
+* fourth for architecture (i386/amd64)
+* fifth for fixed imgsizes in GigaBytes (1GB/2GB)
 
-After typing your sudo password(hurry) let it run for ~45 minutes and don't interfere with own keyboard input in the qemu-monitor. Open a terminal and cd to the downloaded files:
+Open a terminal and cd to the downloaded files:
 
 ```
 chmod +x *.sh #makes the scripts executable
 ./host.sh prepare #install qemu&virtualbox and debian/ubuntu guest OS install isos
-./host.sh create debian i386 1GB #asks for sudo and will run for ~45 minutes
-./host.sh modify ubuntu amd64 2GB #no qemu payload, just modify the guest manually from the screen/keyboard
-./host.sh convertovb ubuntu amd64 2GB #converts the img to a Oracle VirtualBox OVA appliance "needs testing"
+./host.sh create debian stretch i386 1GB #asks for sudo hurry and will run for ~45 minutes don't interfere with own keyboard input!
+./host.sh modify ubuntu xenial amd64 2GB #no qemu payload, just modify the guest manually from the screen/keyboard
+./host.sh convertovb ubuntu xenial amd64 2GB #converts the img to a Oracle VirtualBox OVA appliance "needs testing"
 ```
 
 After imaging and running the image on bare metal target system its a good start to change the timezone and expand the rootfs or change password. Before that it may be wise to setup ssh or wpa_supplicant just follow raspbian documentation:
@@ -45,6 +46,7 @@ sudo ./init_resize_rootfs.sh #expands rootfs to max bare metal disk and reboots
 ``` 
 
 ## TODO's
+- /etc/dhcpcd.conf unlink and copy form /boot otherwise apt stalls
 - complete raspbianlite full package selection
 - optimize boot/rootfs partitionsize / freespace
 - correctly check for sudo
