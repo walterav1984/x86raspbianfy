@@ -257,7 +257,7 @@ sudo apt-get update
 function raspbianliteslim {
 case $WHICHDISTRO in
 Debian)
-DEBIANONLY="blends-tasks firmware-atheros firmware-brcm80211 firmware-libertas firmware-misc-nonfree firmware-realtek"
+DEBIANONLY="firmware-atheros firmware-brcm80211 firmware-libertas firmware-misc-nonfree firmware-realtek #blends-tasks"
 ;;
 Ubuntu)
 DEBIANONLY=""
@@ -338,12 +338,12 @@ mkrclocal
 mksshswitch
 cmdlinetxt
 keyboardlang
-dhcpcdconfig
 x86raspbianrepo
 raspbianliteslim
 resizescript
 x86tools
 personal
+dhcpcdconfig
 }
 
 function ubuntu {
@@ -359,11 +359,11 @@ autonetconf
 mksshswitch
 cmdlinetxt
 keyboardlang
-dhcpcdconfig
 raspbianliteslim
 resizescript
 x86tools
 personal
+dhcpcdconfig
 }
 
 function make1 {
