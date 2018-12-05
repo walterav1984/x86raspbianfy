@@ -58,10 +58,10 @@ sudo chmod -R 777 /var/archives
 dpkg -x /var/archives/grub-efi-ia32_*.deb /var/archives/grub-efi-ia32
 dpkg -x /var/archives/grub-efi-ia32-bin*.deb /var/archives/grub-efi-ia32-bin
 sudo cp -a '/var/archives/grub-efi-ia32-bin/usr/lib/grub/i386-efi' /usr/lib/grub/
-sudo grub-install --efi-directory=/boot/ --boot-directory=/boot/gre3 /dev/sda --target=i386-efi --no-nvram
+sudo grub-install --efi-directory=/boot/ --boot-directory=/boot/gre3 /dev/sda --target=i386-efi --removable #--no-nvram
 sudo grub-mkconfig -o /boot/gre3/grub/grub.cfg #is the same as bios version
-mkdir /boot/EFI/BOOT
-cp /boot/EFI/*b*/grubia32.efi /boot/EFI/BOOT/BOOTIA32.efi
+#mkdir /boot/EFI/BOOT
+#cp /boot/EFI/*b*/grubia32.efi /boot/EFI/BOOT/BOOTIA32.efi
 sudo rm -r /var/archives/grub-efi*
 }
 
@@ -71,10 +71,10 @@ sudo chmod -R 777 /var/archives
 dpkg -x /var/archives/grub-efi-amd64_*.deb /var/archives/grub-efi-amd64
 dpkg -x /var/archives/grub-efi-amd64-bin*.deb /var/archives/grub-efi-amd64-bin
 sudo cp -a '/var/archives/grub-efi-amd64-bin/usr/lib/grub/x86_64-efi' /usr/lib/grub/
-sudo grub-install --efi-directory=/boot/ --boot-directory=/boot/gre6 /dev/sda --target=x86_64-efi --no-nvram
+sudo grub-install --efi-directory=/boot/ --boot-directory=/boot/gre6 /dev/sda --target=x86_64-efi --removable #--no-nvram
 sudo grub-mkconfig -o /boot/gre6/grub/grub.cfg #is the same as bios version
-mkdir /boot/EFI/BOOT
-cp /boot/EFI/*b*/grubx64.efi /boot/EFI/BOOT/BOOTX64.efi
+#mkdir /boot/EFI/BOOT
+#cp /boot/EFI/*b*/grubx64.efi /boot/EFI/BOOT/BOOTX64.efi
 sudo rm -r /var/archives/grub-efi*
 }
 
@@ -173,7 +173,7 @@ sudo rm /etc/dhcpcd.conf
 sudo ln -s /boot/dhcpcd.conf /etc/dhcpcd.conf
 }
 
-function resizescript {
+function postinstallscripts {
 sudo apt-get -y install parted mtools blktool --no-install-recommends
 cat <<'EOF' > /home/pi/init_resize_rootfs.sh
 #!/bin/bash
@@ -238,6 +238,90 @@ sudo update-grub2
 EOF
 
 chmod +x /home/pi/init_change_uuids.sh
+
+cat <<'EOF' > /home/pi/init_boot2root_uefibios_grubfix.sh
+#!/bin/bash
+
+#
+# init_boot2root_uefibios_grubfix.sh 
+#
+
+#detect bios/uefi-type kernel 3.16/4.x or higher
+if [ -d /sys/firmware/efi ];then
+EFITYPE=$(cat /sys/firmware/efi/fw_platform_size)
+ case $EFITYPE in
+ 32)
+ BOOTFIRMWARE=ia32
+ ;;
+ 64)
+ BOOTFIRMWARE=amd64
+ ;;
+ esac
+else
+ BOOTFIRMWARE=BIOS
+fi
+
+function boot2root {
+#remove /boot symlinks...
+sudo unlink /etc/default/keyboard
+sudo unlink /etc/dhcpcd.conf
+sudo unlink /etc/wpa_supplicant/wpa_supplicant.conf
+#move boot partition to /boot
+cd /
+sudo cp -a /boot /boot.bak
+sudo rm -r /boot/*
+sudo umount /boot
+head -n 9 /etc/fstab | sudo tee /etc/fstab
+cd /boot.bak
+sudo cp -a * /boot/
+#restore /boot symlinks...
+sudo ln -s /boot/keyboard /etc/default/keyboard
+sudo chown root:netdev /boot/dhcpcd.conf
+sudo ln -s /boot/dhcpcd.conf /etc/dhcpcd.conf
+sudo ln -s /boot/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
+}
+
+function boot2efi {
+#alter vfat boot partition id to EFI
+printf "t\n1\nef\nw\nq\n" | sudo fdisk /dev/sda #partition id EFI
+sudo mv /boot/EFI /boot/tefi
+sudo mkdir /boot/efi
+SDA1UUID=$(sudo blkid | grep sda1 | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
+echo "$SDA1UUID /boot/efi vfat umask=0077 0 1" | sudo tee -a /etc/fstab
+sudo mount -a
+#mount /dev/sda1 /boot/efi
+}
+
+case $BOOTFIRMWARE in
+BIOS)
+boot2root
+sudo grub-install /dev/sda
+sudo update-grub2
+;;
+ia32)
+boot2root
+sudo apt-get -y install grub-efi-ia32 
+sudo grub-install --target=i386-efi /dev/sda --removable
+sudo grub-install /dev/sda
+sudo update-grub2
+sudo efibootmgr -v
+;;
+amd64)
+boot2root
+sudo apt-get -y install grub-efi-amd64
+sudo grub-install --target=x86_64-efi /dev/sda --removable
+sudo grub-install /dev/sda
+sudo update-grub2
+sudo efibootmgr -v
+#sudo grub-install --efi-directory=/boot/efi/EFI? --boot-directory=/boot /dev/sda --target= --no-nvram #--removable = --no-nvram = /efi/boot/bootx.efi files
+;;
+esac
+
+echo "sudo efibootmgr -v #check if efi nvram variable for debian/ubuntu was set"
+
+exit
+EOF
+chmod +x /home/pi/init_boot2root_uefibios_grubfix.sh
 }
 
 function removeswap {
@@ -340,7 +424,7 @@ cmdlinetxt
 keyboardlang
 x86raspbianrepo
 raspbianliteslim
-resizescript
+postinstallscripts
 x86tools
 personal
 dhcpcdconfig
@@ -360,7 +444,7 @@ mksshswitch
 cmdlinetxt
 keyboardlang
 raspbianliteslim
-resizescript
+postinstallscripts
 x86tools
 personal
 dhcpcdconfig
