@@ -21,7 +21,7 @@ After the guest machine started, the 'host2guest.sh' script uses 'qcmpayload.txt
 After ~45 minutes(hardcoded time), there will be a < 1GB 'disk-distro-arch-1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
 
 ## Start?
-Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 amd64(32bit may work) desktop with 4 arguments:
+Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 amd64(32bit may work) desktop with 5 arguments:
 * first for action (prepare/create/modify/convertovb) 
 * second for distro (debian/ubuntu)
 * third for release codename(stretch/xenial)
