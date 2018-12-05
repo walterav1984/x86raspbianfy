@@ -11,7 +11,7 @@ If your 'arm' cpu based raspbian pi project won't cut it performance wise, or la
 Another reason for this project is that AdaFruit Read Only Raspbian system modification script https://learn.adafruit.com/read-only-raspberry-pi/overview also has been confirmed working on debian stretch i686 making x86 attractive again for simple embedded power-cut/outage usecases.
 Finally its 2018 and no time should be wasted on the installing-phase of a OS especially on old, slow hardware with lacking/slow usb or buggy optical drive boot. Just image, connect to ssh, keyboard&monitor or even serialconsole and instantly start.
 
-## Requirments
+## Requirements
 There are 3 bash scripts(+qemu payload files) and around 2GB in diskspace and a active internet connection(~15MBit) for the host and vmguest is needed when creating a 1GB image.
 
 ## How it works?
@@ -21,10 +21,10 @@ After the guest machine started, the 'host2guest.sh' script uses 'qcmpayload.txt
 After ~45 minutes(hardcoded time), there will be a < 1GB 'disk-distro-arch-1GB.img' file which you can image to any pc you like. For customization of your image before build (edit config files/apt-get packages) you probably want to modify 'rf.sh', if you want to resize/change boot/rootfs/filesystem partition you have to look carefull at 'qcmpayload.txt' but its not hard.
 
 ## Start?
-Download/clone this github repo and run the 'host.sh' script on a ubuntu 18.04 amd64(32bit may work) desktop with 5 arguments:
+Download/clone this github repo on a ubuntu 18.04 amd64(32bit may work)desktop and run the 'host.sh' script with '5' arguments:
 * first for action (prepare/create/modify/convertovb) 
 * second for distro (debian/ubuntu)
-* third for release codename(stretch/xenial)
+* third for release codename(jessie/stretch/xenial/bionic)
 * fourth for architecture (i386/amd64)
 * fifth for fixed imgsizes in GigaBytes (1GB/2GB)
 
@@ -58,3 +58,24 @@ sudo ./init_resize_rootfs.sh #expands rootfs to max bare metal disk and reboots
 - [qemu console monitor scripting telnet](https://stackoverflow.com/questions/33362322/how-in-qemu-send-mouse-move-mouse-button-sendkey-via-some-api)
 - [default raspbian-lite packages](https://n8henrie.com/2017/09/list-of-default-packages-on-raspbian-stretch-and-stretch-lite/)
 - [raspbian-lite boot behaviour](https://www.raspberrypi.org/forums/viewtopic.php?t=206783)
+- [raspbian fat16/fat32](https://www.raspberrypi.org/forums/viewtopic.php?t=18540)
+- [grub2 serial console](https://www.hiroom2.com/2017/06/19/debian-9-grub2-and-linux-with-serial-console/)
+- [debian 9 stretch udev ethernet names](https://www.itzgeek.com/how-tos/linux/debian/change-default-network-name-ens33-to-old-eth0-on-debian-9.html)
+- [debian 9 stretch systemd eth names](https://unix.stackexchange.com/questions/321755/eth0-no-longer-claiming-address-on-debian-jessie)
+- [debian 9 stretch rc.local missing](https://www.itechlounge.net/2017/10/linux-how-to-add-rc-local-in-debian-9)
+- [debian installer systemd bug didn't show up](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=820074;msg=12)
+- [raspbian ssh boot partition toggle](https://www.raspberrypi.org/forums/viewtopic.php?t=198660)
+- [raspbian wpa_supplicant boot setting](https://www.raspberrypi.org/forums/viewtopic.php?t=206783)
+- [raspbian ssh/wifi toggle scripts](https://github.com/RPi-Distro/raspberrypi-sys-mods/tree/master/debian)
+- [ubuntu cloud image on bare metal](https://pardini.net/blog/2016/11/05/running-ubuntu-cloud-images-with-cloud-init-on-all-infrastructure-from-cloud-to-bare-metal/)
+- [debian installer cannot find cdrom](https://github.com/pbatard/rufus/issues/501)
+- [convert qcow2 with qemu to raw](https://unix.stackexchange.com/questions/30106/move-qcow2-image-to-physical-hard-drive)
+- [raspbian change disk identifier uuid](https://www.raspberrypi.org/forums/viewtopic.php?t=191775)
+- [change symbolic link ownership dhcpcd.conf?](https://unix.stackexchange.com/questions/218557/how-to-change-ownership-from-symbolic-links/218559)
+- [generic > targeted initrd after install](https://askubuntu.com/questions/16007/switch-to-a-targeted-initrd-after-setup)
+- [wpa_supplicant systemd dhcpcd](http://nixventure.blogspot.com/2016/04/debian-wpasupplicant-systemd.html)
+- [dhcpcd raspberry](https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=191453&start=25)
+- [wpa dhcpcd](https://forum.voidlinux.org/t/wpa-supplicant-and-dhcpcd-require-restart-after-reboot/3396)
+- [raspberry wifi](https://www.raspberrypi.org/forums/viewtopic.php?t=191061)
+- [grub uuid disk cloning](https://ubuntuforums.org/showthread.php?t=1682129)
+- [qemu problem without error](https://unix.stackexchange.com/questions/362952/libvirt-qemu-kvm-fails-on-guest-creation-without-any-specific-error-message)
