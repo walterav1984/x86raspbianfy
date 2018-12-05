@@ -63,7 +63,7 @@ debian)
         QCMPAYLOAD=qcmpayloadd8.txt
         ;;
         stretch)
-        QCMPAYLOAD=qcmpayloadd.txt
+        QCMPAYLOAD=qcmpayloadd9.txt
         ;;
     esac
 OVBOSTYPE="Debian$OVBARCH"
@@ -71,7 +71,7 @@ OVBOSTYPE="Debian$OVBARCH"
 ubuntu)
     case $CNAME in
         xenial)
-        QCMPAYLOAD=qcmpayloadu.txt
+        QCMPAYLOAD=qcmpayloadu1604.txt
         ;;
         bionic)
         QCMPAYLOAD=qcmpayloadu1804.txt
