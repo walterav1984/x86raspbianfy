@@ -49,9 +49,7 @@ sudo ./init_resize_rootfs.sh #expands rootfs to max bare metal disk and reboots
 - /etc/dhcpcd.conf unlink and copy form /boot otherwise apt stalls
 - complete raspbianlite full package selection
 - optimize boot/rootfs partitionsize / freespace
-- correctly check for sudo
 - fix uuid change on debian
-- add option to replace grub-pc by making grub-efi(including nvram variables) permanent
 - adafruit readonly script adds to cmdline.txt instead of grub "fastboot noswap ro"
 
 ## Links
