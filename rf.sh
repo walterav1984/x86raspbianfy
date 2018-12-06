@@ -300,19 +300,21 @@ sudo update-grub2
 ;;
 ia32)
 boot2root
+boot2efi
 sudo apt-get -y install grub-efi-ia32 
 sudo grub-install --target=i386-efi /dev/sda --removable
 sudo grub-install /dev/sda
 sudo update-grub2
-sudo efibootmgr -v
+#sudo efibootmgr -v
 ;;
 amd64)
 boot2root
+boot2efi
 sudo apt-get -y install grub-efi-amd64
 sudo grub-install --target=x86_64-efi /dev/sda --removable
 sudo grub-install /dev/sda
 sudo update-grub2
-sudo efibootmgr -v
+#sudo efibootmgr -v
 #sudo grub-install --efi-directory=/boot/efi/EFI? --boot-directory=/boot /dev/sda --target= --no-nvram #--removable = --no-nvram = /efi/boot/bootx.efi files
 ;;
 esac
@@ -341,7 +343,7 @@ sudo apt-get update
 function raspbianliteslim {
 case $WHICHDISTRO in
 Debian)
-DEBIANONLY="firmware-atheros firmware-brcm80211 firmware-libertas firmware-misc-nonfree firmware-realtek #blends-tasks"
+DEBIANONLY="firmware-atheros firmware-brcm80211 firmware-libertas firmware-misc-nonfree firmware-realtek" #blends-tasks
 ;;
 Ubuntu)
 DEBIANONLY=""
