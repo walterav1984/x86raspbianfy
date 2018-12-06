@@ -6,6 +6,8 @@
 #creates a xGB diskimage for the virtualmachine starts the virtualmachine with
 #telnet capabilities and let 'host2guest.sh' feed/automate the whole process.
 
+sudo echo "Figure out how to give current user elevated rights for qemu-kvm or keep using sudo..."
+
 #first argument defines action "prepare/create/modify/convertovb"
 XACT=$1
 
