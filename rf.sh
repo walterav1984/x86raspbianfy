@@ -199,7 +199,22 @@ chmod +x /home/pi/init_resize_rootfs.sh
 cat <<'EOF' > /home/pi/init_change_uuids.sh
 #!/bin/bash
 
-#only works on Ubuntu? Debian needs metadata_csum_seed incompatible grub osprober/10_linux? 
+#only works on Ubuntu 16.04 or lower? Debian 9 needs metadata_csum_seed but grub-probe won't detect UUID after change?
+
+WHICHDR=$(cat /etc/issue | sed "s|[^0-9]*||g")
+
+case $WHICHDR in
+8)
+T2FSOPT=""
+;;
+16045)
+T2FSOPT=""
+;;
+*)
+T2FSOPT="metadata_csum_seed,"
+;;
+esac
+
 #sudo debconf-show grub-p
 #sudo grub-probe --target=fs --device /dev/sdaX
 #sudo blkid
@@ -216,10 +231,10 @@ RDEVPART=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||')
 echo $BDEVPART
 echo $RDEVPART
 #sudo tune2fs /dev/sda -U random -O metadata_csum_seed breaks grub os-prober/10-linux
-sudo tune2fs -O ^uninit_bg $RDEVPART
+sudo tune2fs -O $T2FSOPT^uninit_bg $RDEVPART
 #sudo tune2fs -U $uuid $root_disk
 sudo tune2fs $RDEVPART -U random
-sudo tune2fs -O +uninit_bg $RDEVPART
+sudo tune2fs -O $T2FSOPT+uninit_bg $RDEVPART
 RREPUUID=$(sudo blkid | grep $RDEVPART | sed 's|.*" UUID="||' | sed 's|" TYPE.*| |')
 echo $RREPUUID
 sudo sed -i "s|$ORIRUUID|$RREPUUID|" /etc/fstab
