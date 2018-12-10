@@ -348,6 +348,11 @@ sudo rm /swapfile
 sudo sed -i '|/swapfile|#/swapfile|' /etc/fstab
 }
 
+function fixrecoverymode {
+echo "root:raspberry" | sudo chpasswd
+sudo apt-get -y remove friendly-recovery
+}
+
 function x86raspbianrepo {
 echo "deb http://archive.raspberrypi.org/debian/ stretch main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
 curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o /tmp/rrkey
@@ -444,6 +449,7 @@ raspbianliteslim
 postinstallscripts
 x86tools
 personal
+fixrecoverymode
 dhcpcdconfig
 }
 
@@ -464,6 +470,7 @@ raspbianliteslim
 postinstallscripts
 x86tools
 personal
+fixrecoverymode
 dhcpcdconfig
 }
 
@@ -494,5 +501,5 @@ esac
 $PERFORM
 
 #sudo poweroff;exit
-echo "All Done, gracefully shutdown vmguest 'sudo poweroff;exit' to use image"
+echo "All Done, gracefully shutdown vmguest 'sudo systemctl poweroff;exit' to use image"
 exit 0
