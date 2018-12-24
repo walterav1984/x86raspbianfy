@@ -78,6 +78,24 @@ sudo grub-mkconfig -o /boot/gre6/grub/grub.cfg #is the same as bios version
 sudo rm -r /var/archives/grub-efi*
 }
 
+function grubahcisata {
+sudo tee -a /etc/grub.d/40_custom <<EOF
+set -e
+
+# Uncomment line corresponding your chipset to force sata AHCI mode!
+# Use 'lspci' to detect specific chipset id!
+
+# Nvidia MCP79
+#echo "setpci -d 10de:0ab5 9c.b=06"
+
+# Intel ICH6/631xESB/632xESB
+#echo "setpci -d 8086:2680 90.b=40"
+
+# Intel ICH7
+#echo "setpci -s 00:1f.2 90.b=40"
+EOF
+}
+
 function autonetconf {
 sudo apt-get -y install crda dhcpcd5 ethtool net-tools wireless-tools wireless-regdb wpasupplicant
 sudo ln -s /usr/share/dhcpcd/hooks/10-wpa_supplicant /lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant
