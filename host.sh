@@ -6,6 +6,12 @@
 #creates a xGB diskimage for the virtualmachine starts the virtualmachine with
 #telnet capabilities and let 'host2guest.sh' feed/automate the whole process.
 
+#TODO
+#encrypted image creation
+#detect OSTYPE darwin17/debian/ubuntu?
+#determin acceleration platform specific kvm/hvf
+#determin package manager apt/brew
+
 sudo echo "Figure out how to give current user elevated rights for qemu-kvm or keep using sudo..."
 
 #first argument defines action "prepare/create/modify/convertovb"
@@ -25,6 +31,10 @@ IARCH=$4
 #2gb larger boot volume
 DSIZE=$5
 #echo 50MB smaller?
+
+#amount of ram triggers low/high mem installer/question/order   
+VMRAM=384
+
 case $DSIZE in
 1GB)
 ISIZE=976
@@ -67,6 +77,9 @@ debian)
         stretch)
         QCMPAYLOAD=qcmpayloadd9.txt
         ;;
+        buster)
+        QCMPAYLOAD=qcmpayloadd10.txt
+        ;;
     esac
 OVBOSTYPE="Debian$OVBARCH"
 ;;
@@ -91,46 +104,60 @@ sudo apt-get -y install qemu-kvm virtualbox virtualbox-guest-additions-iso
 mkdir isos
 cd isos
 DISTRO=debian
+RELNAME=jessie
+RELVER=8.11.1
 IARCH=i386
-wget https://cdimage.debian.org/cdimage/archive/8.11.0/$IARCH/iso-cd/debian-8.11.0-$IARCH-netinst.iso -O $DISTRO-jessie-$IARCH.iso
+wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
-wget https://cdimage.debian.org/cdimage/archive/8.11.0/$IARCH/iso-cd/debian-8.11.0-$IARCH-netinst.iso -O $DISTRO-jessie-$IARCH.iso
+wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
+RELNAME=stretch
+RELVER=9.11.0
 IARCH=i386
-wget https://cdimage.debian.org/cdimage/archive/9.5.0/$IARCH/iso-cd/debian-9.5.0-$IARCH-netinst.iso -O $DISTRO-stretch-$IARCH.iso
+wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
-wget https://cdimage.debian.org/cdimage/archive/9.5.0/$IARCH/iso-cd/debian-9.5.0-$IARCH-netinst.iso -O $DISTRO-stretch-$IARCH.iso
+wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
+RELNAME=buster
+RELVER=10.0.0
+IARCH=i386
+wget https://cdimage.debian.org/cdimage/release/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
+IARCH=amd64
+wget https://cdimage.debian.org/cdimage/release/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
 DISTRO=ubuntu
+RELNAME=xenial
 IARCH=i386
-wget http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-xenial-$IARCH.iso
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
-wget http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-xenial-$IARCH.iso
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+RELNAME=bionic
 IARCH=i386
-wget http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-bionic-$IARCH.iso
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
-wget http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-bionic-$IARCH.iso
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 cd ..
 }
 
 function create {
 #create system
 qemu-img create -f raw disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img $ISIZE'M'
-sudo qemu-system-$QARCH -enable-kvm -drive format=raw,file=disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img -cdrom $DISO -boot d -m 512 -monitor telnet:localhost:$TPORT,server,nowait & #-device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
+sudo qemu-system-$QARCH -accel kvm -drive format=raw,file=disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img -cdrom $DISO -boot d -m $VMRAM -monitor telnet:localhost:$TPORT,server,nowait & #-device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
 sleep 10
 ./host2guest.sh $QCMPAYLOAD $TPORT $IARCH $DSIZE 
 }
 
 function modify {
 #boot current image
-sudo qemu-system-$QARCH -enable-kvm -drive format=raw,file=disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img -cdrom $DISO -boot c -m 512 -monitor telnet:localhost:$TPORT,server,nowait & #-device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
+sudo qemu-system-$QARCH -accel kvm -drive format=raw,file=disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img -cdrom $DISO -boot c -m $VMRAM -monitor telnet:localhost:$TPORT,server,nowait -device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
 }
 
 function convertovb {
 #install target guestadditions
 QCMPAYLOAD=qcmpayload-covb.txt
-sudo qemu-system-$QARCH -enable-kvm -drive format=raw,file=disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img -cdrom $DISO -boot c -m 512 -monitor telnet:localhost:$TPORT,server,nowait & #-device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
+sudo qemu-system-$QARCH -accel kvm -drive format=raw,file=disk-$DISTRO-$CNAME-$IARCH-$DSIZE.img -cdrom $DISO -boot c -m $VMRAM -monitor telnet:localhost:$TPORT,server,nowait & #-device usb-ehci,id=ehci -device usb-host,id=asix,bus=ehci.0,vendorid=0x0b95,productid=0x7720 &
 sleep 10
 ./host2guest.sh $QCMPAYLOAD $TPORT $IARCH
 #sleep wait or continue after host2guest finish? 
+#detect if qemu is running otherwise continue?
+#NO SUDO!
 
 #convert current image to vbox appliance
 #VirtualBox VM NAME
