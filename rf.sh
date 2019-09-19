@@ -372,6 +372,7 @@ sudo apt-get -y remove friendly-recovery
 }
 
 function x86raspbianrepo {
+sudo apt-get -y install gnupg2
 echo "deb http://archive.raspberrypi.org/debian/ stretch main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
 curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o /tmp/rrkey
 sudo cat /tmp/rrkey | sudo apt-key add -
