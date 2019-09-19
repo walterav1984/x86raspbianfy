@@ -2,7 +2,7 @@
 #
 # host2guest.sh payload.txt telnetport architecture disksize
 #
-#This script will feed the guestvm its qemu console monitor via telnet with fake 
+#This script will feed the guestvm its qemu console monitor via nc -N with fake 
 #scripted keyboard input line by line from a payload file givin by argument. It
 #will echo keysend commands, commented progress and wait time in seconds. After 
 #the last line it just stops...
@@ -19,7 +19,7 @@ do
 	filtercommentonly=$(echo $line | grep '#')
 	echo $filtercommentonly
 	filterqemuonly=$(echo $line | grep -v '#' | grep -v wait)
-	echo $filterqemuonly | telnet localhost $telnetport >/dev/null 2>&1
+	echo $filterqemuonly | nc -N 127.0.0.1 $telnetport >/dev/null 2>&1
 	echo $filterqemuonly
  	sendkeyact=$(case $(echo $line | grep '#STEPARCHDIFF' | sed -e 's/#//g') in
         STEPARCHDIFF)
@@ -34,7 +34,7 @@ do
            ;;
        esac
       )
- 	echo $sendkeyact | telnet localhost $telnetport >/dev/null 2>&1
+ 	echo $sendkeyact | nc -N 127.0.0.1 $telnetport >/dev/null 2>&1
  	sendkeybct=$(case $(echo $line | grep '#STEPSIZEDIFF' | sed -e 's/#//g') in
         STEPSIZEDIFF)
             case $dsize in
@@ -48,7 +48,7 @@ do
            ;;
        esac
       )
- 	echo $sendkeybct | telnet localhost $telnetport >/dev/null 2>&1
+ 	echo $sendkeybct | nc -N 127.0.0.1 $telnetport >/dev/null 2>&1
  	sendkeycct=$(case $(echo $line | grep '#STEPPSELDIFF' | sed -e 's/#//g') in
         STEPPSELDIFF)
             case $dsize in
@@ -62,8 +62,8 @@ do
             ;;
        esac
       )
- 	echo $sendkeycct | telnet localhost $telnetport >/dev/null 2>&1
-	sleep 3
+ 	echo $sendkeycct | nc -N 127.0.0.1 $telnetport >/dev/null 2>&1
+	sleep 2
 	filterwaittime=$(echo $line | grep wait | sed -e 's/wait//g' -)
 	echo $filterwaittime
 	sleep $filterwaittime >/dev/null 2>&1
