@@ -119,9 +119,9 @@ wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RE
 RELNAME=buster
 RELVER=10.0.0
 IARCH=i386
-wget https://cdimage.debian.org/cdimage/release/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
+wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
-wget https://cdimage.debian.org/cdimage/release/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
+wget https://cdimage.debian.org/cdimage/archive/$RELVER/$IARCH/iso-cd/debian-$RELVER-$IARCH-netinst.iso -O $DISTRO-$RELNAME-$IARCH.iso
 DISTRO=ubuntu
 RELNAME=xenial
 IARCH=i386
