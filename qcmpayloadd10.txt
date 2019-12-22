@@ -294,7 +294,7 @@ wait15
 
 #Select and install software
 sendkey kp_enter
-wait75
+wait100
 #automatic updates?
 sendkey kp_enter
 wait20
@@ -319,7 +319,7 @@ sendkey spc
 #STEPPSELDIFF
 sendkey tab
 sendkey kp_enter
-wait220
+wait120
 
 #Install the GRUB boot loader...
 sendkey kp_enter
