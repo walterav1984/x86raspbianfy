@@ -294,6 +294,12 @@ else
  BOOTFIRMWARE=BIOS
 fi
 
+ORIBUUID=$(cat /etc/fstab | grep vfat | sed 's|/.*||' | sed 's|.*=||')
+ORIRUUID=$(cat /etc/fstab | grep ext4 | sed 's|/.*||' | sed 's|.*=||')
+BRDEV=$(sudo blkid | grep $ORIBUUID | sed 's|:.*||'| sed 's|[0-9]*||g')
+BDEVPART=$(sudo blkid | grep $ORIBUUID | sed 's|:.*||')
+RDEVPART=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||')
+
 function boot2root {
 #remove /boot symlinks...
 sudo unlink /etc/default/keyboard
@@ -303,8 +309,9 @@ sudo unlink /etc/wpa_supplicant/wpa_supplicant.conf
 cd /
 sudo cp -a /boot /boot.bak
 sudo rm -r /boot/*
+echo "The x86raspbianfy boot partition options have moved to root /boot to make it compatible with native Debian OS update/upgrade!" | sudo tee /boot/readme.txt
 sudo umount /boot
-head -n 9 /etc/fstab | sudo tee /etc/fstab
+
 cd /boot.bak
 sudo cp -a * /boot/
 #restore /boot symlinks...
@@ -312,15 +319,16 @@ sudo ln -s /boot/keyboard /etc/default/keyboard
 sudo chown root:netdev /boot/dhcpcd.conf
 sudo ln -s /boot/dhcpcd.conf /etc/dhcpcd.conf
 sudo ln -s /boot/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
+head -n 9 /etc/fstab | sudo tee /etc/fstab
 }
 
 function boot2efi {
-#alter vfat boot partition id to EFI
-printf "t\n1\nef\nw\nq\n" | sudo fdisk /dev/sda #partition id EFI
+#alter vfat boot partition id to EFI hidden partition MAC/WIN?
+printf "t\n1\nef\nw\nq\n" | sudo fdisk $BRDEV #partition id EFI
 sudo mv /boot/EFI /boot/tefi
 sudo mkdir /boot/efi
-SDA1UUID=$(sudo blkid | grep sda1 | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
-echo "$SDA1UUID /boot/efi vfat umask=0077 0 1" | sudo tee -a /etc/fstab
+BDEVUUID=$(sudo blkid | grep $BDEVPART | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
+echo "$BDEVUUID /boot/efi vfat umask=0077 0 1" | sudo tee -a /etc/fstab
 sudo mount -a
 #mount /dev/sda1 /boot/efi
 }
@@ -328,15 +336,15 @@ sudo mount -a
 case $BOOTFIRMWARE in
 BIOS)
 boot2root
-sudo grub-install /dev/sda
+sudo grub-install $BRDEV
 sudo update-grub2
 ;;
 ia32)
 boot2root
 boot2efi
-sudo apt-get -y install grub-efi-ia32 
-sudo grub-install --target=i386-efi /dev/sda --removable
-sudo grub-install /dev/sda
+sudo apt-get -y install grub-efi-ia32 #grub-efi-ia32-bin efibootmgr / nvram?
+sudo grub-install --target=i386-efi $BRDEV --removable
+sudo grub-install $BRDEV
 sudo update-grub2
 #sudo efibootmgr -v
 ;;
@@ -344,15 +352,15 @@ amd64)
 boot2root
 boot2efi
 sudo apt-get -y install grub-efi-amd64
-sudo grub-install --target=x86_64-efi /dev/sda --removable
-sudo grub-install /dev/sda
+sudo grub-install --target=x86_64-efi $BRDEV --removable
+sudo grub-install $BRDEV
 sudo update-grub2
 #sudo efibootmgr -v
 #sudo grub-install --efi-directory=/boot/efi/EFI? --boot-directory=/boot /dev/sda --target= --no-nvram #--removable = --no-nvram = /efi/boot/bootx.efi files
 ;;
 esac
-
-echo "sudo efibootmgr -v #check if efi nvram variable for debian/ubuntu was set"
+#sudo apt remove / dpkg-reconfigure grub-pc
+echo "sudo efibootmgr -v #check if efi nvram variable for debian/ubuntu was set?"
 
 exit
 EOF
