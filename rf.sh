@@ -7,7 +7,8 @@
 #partition in accessible FAT filesystem configurable with raspberry like text-
 #files for instance 'wpa_supplicant.conf' or 'ssh' and similar shipped packages.
 
-WHICHDISTRO=$(cat /etc/issue | sed "s| .*||" | egrep "Debian|Ubuntu")
+WHICHDISTRO=$(cat /etc/issue | sed "s| .*||" | sed -e 's/\(.*\)/\L\1/' | egrep "debian|ubuntu")
+WHICHRELEASE=$(cat /etc/apt/sources.list | grep -E "debian|ubuntu" | head -n 1 | sed "s|.*$WHICHDISTRO/ ||" | sed "| main.*||")
 
 PERFORM=$1
 
@@ -342,7 +343,7 @@ sudo update-grub2
 ia32)
 boot2root
 boot2efi
-sudo apt-get -y install grub-efi-ia32 #grub-efi-ia32-bin efibootmgr / nvram?
+#sudo apt-get -y install grub-efi-ia32 #grub-efi-ia32-bin efibootmgr / nvram?
 sudo grub-install --target=i386-efi $BRDEV --removable
 sudo grub-install $BRDEV
 sudo update-grub2
@@ -351,7 +352,7 @@ sudo update-grub2
 amd64)
 boot2root
 boot2efi
-sudo apt-get -y install grub-efi-amd64
+#sudo apt-get -y install grub-efi-amd64 #grub-efi-ia32-bin efibootmgr / nvram?
 sudo grub-install --target=x86_64-efi $BRDEV --removable
 sudo grub-install $BRDEV
 sudo update-grub2
@@ -381,7 +382,7 @@ sudo apt-get -y remove friendly-recovery
 
 function x86raspbianrepo {
 sudo apt-get -y install gnupg2
-echo "deb http://archive.raspberrypi.org/debian/ stretch main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
+echo "deb http://archive.raspberrypi.org/debian/ $WHICHRELEASE main ui" | sudo tee /etc/apt/sources.list.d/raspi.list
 curl http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o /tmp/rrkey
 sudo cat /tmp/rrkey | sudo apt-key add -
 sudo apt-get update
@@ -389,10 +390,10 @@ sudo apt-get update
 
 function raspbianliteslim {
 case $WHICHDISTRO in
-Debian)
+debian)
 DEBIANONLY="firmware-atheros firmware-brcm80211 firmware-libertas firmware-misc-nonfree firmware-realtek" #blends-tasks
 ;;
-Ubuntu)
+ubuntu)
 DEBIANONLY=""
 ;;
 esac
@@ -438,7 +439,12 @@ esac
 
 #install packages depending on distro
 case $WHICHDISTRO in
-Debian)
+debian)
+case $WHICHRELEASE in
+jessie)
+echo "TODO:test if jessie-backports is new enough?"
+;;
+stretch)
 echo "deb http://ftp.debian.org/debian stretch-backports main non-free contrib" | sudo tee -a /etc/apt/sources.list
 sudo apt-get update
 sudo apt-get -y upgrade
@@ -447,7 +453,17 @@ sudo apt-get -y install dpkg-dev linux-headers-$HEADERS #backport installs heade
 sudo apt-get -y install -t stretch-backports virtualbox-guest-dkms #installs headers new kernel?
 sudo poweroff;exit
 ;;
-Ubuntu)
+buster)
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade #otherwise kernel-headers will not be build for current new kernel
+sudo apt-get -y install dpkg-dev linux-headers-$HEADERS #backport installs headers for backport kernel?
+sudo apt-get -y install virtualbox-guest-dkms #installs headers new kernel?
+sudo poweroff;exit
+;;
+esac
+;;
+ubuntu)
 sudo apt-get update
 sudo apt-get -y upgrade
 sudo apt-get -y dist-upgrade
@@ -503,10 +519,10 @@ dhcpcdconfig
 
 function make1 {
 case $WHICHDISTRO in
-Debian)
+debian)
 debian
 ;;
-Ubuntu)
+ubuntu)
 ubuntu
 ;;
 esac
@@ -514,11 +530,11 @@ esac
 
 function make2 {
 case $WHICHDISTRO in
-Debian)
+debian)
 debian
 raspbianlitefull
 ;;
-Ubuntu)
+ubuntu)
 ubuntu
 #raspbianlitefull
 ;;
