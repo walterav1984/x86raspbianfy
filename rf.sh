@@ -323,9 +323,47 @@ sudo ln -s /boot/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
 head -n 9 /etc/fstab | sudo tee /etc/fstab
 }
 
+#TODO native Mac System Preferences Startup Disk Pane support gives blackscreen...
+#https://glandium.org/blog/?p=2830
+#https://discussions.apple.com/thread/1677851
+#https://www.insanelymac.com/forum/topic/12299-could-someone-clear-a-few-things-up-for-me/
+#needs GPT and needs HFS #Journaled?ignore permissions?
+#could not set boot device property: 0xe00002bc #csrutil status el capitan >?
+#sudo apt -y install hfsprogs gdisk #mbr icnsutils wget librsvg2-bin build-essential 
+#sudo cp -a /boot /boot.bak
+#sudo umount /boot
+#printf "a\n1\nt\n1\naf\nw\nq\n" sudo fdisk /dev/sdx #disables mbr boot flag p1 changes fat to hfs 
+#sudo mkfs.hfsplus /dev/sdb1 -v Debian
+#sudo cp -a /boot.bak /boot
+#sudo mv /boot/EFI /boot/tefi
+#sudo mkdir /boot/efi
+#fstab/mount hfsplus /boot/efi
+#printf "w\ny\n" | sudo gdisk /dev/sdb #99% resize gpt needs space at disk end!!
+#sudo grub-install /dev/sdb --target=x86_64-efi --removable 
+#error ... not found core.efi part_gpt.mod ext2.mod fshelp.mod hfsmod?
+#it creates /boot/efi/EFI/BOOT/S*/L*/CoreS*/ wrong folder
+#manually move  /S*/L*/CoreS*/
+#add fake kernel /mach_kernel /S/L/Kernels/kernel
+#add info plist
+#wget http://www.codon.org.uk/~mjg59/mactel-boot/mactel-boot-0.9.tar.bz2
+#tar -jxf mactel-boot-0.9.tar.bz2
+#cd mactel-boot-0.9
+#make PRODUCTVERSION=DebianB
+#cp SystemVersion.plist /mnt/System/Library/CoreServices/
+#bless?
+#wget https://debian.org/logos/openlogo.svg
+#rsvg-convert -w 128 -h 128 -o /tmp/debian.png openlogo.svg
+#sudo png2icns /mnt/.VolumeIcon.icns /tmp/debian.png
+#gdisk  hybrid mbr?
+#sudo gdisk /dev/sda #printf "x\nr\nh\n1 2\nn\n\nn\ny\nw\ny\n" 100% resize don't 99%!
+#sudo grub-install /dev/sdb2 --boot-directory=/boot --force
+#sudo fdisk /dev/sdb #a1 a2 w set partpart 1>2 printf "a\n1\na\n2\nw\nq\n"
+#sudo install-mbr -p 2 /dev/sda
+#bless -device /dev/disk0s3 -legacy -setBoot -nextonly* usb?
+
 function boot2efi {
-#alter vfat boot partition id to EFI hidden partition MAC/WIN?
-printf "t\n1\nef\nw\nq\n" | sudo fdisk $BRDEV #partition id EFI
+#alter vfat boot partition id to EFI partition hides Finder MacOS and unbootable
+#printf "t\n1\nef\nw\nq\n" | sudo fdisk $BRDEV #partition id EFI
 sudo mv /boot/EFI /boot/tefi
 sudo mkdir /boot/efi
 BDEVUUID=$(sudo blkid | grep $BDEVPART | sed "s|.* UUID|UUID|" | sed "s| TYPE.*||" | sed 's|"||g')
@@ -361,9 +399,22 @@ sudo update-grub2
 ;;
 esac
 #sudo apt remove / dpkg-reconfigure grub-pc
-echo "sudo efibootmgr -v #check if efi nvram variable for debian/ubuntu was set?"
-
-exit
+echo "sudo efibootmgr -v #check if efi nvram variable for debian/ubuntu was set"
+echo ""
+echo "                             Apple Mac's                                 "
+echo ""
+echo "On Apple Mac's use bootpicker during poweron by holding the 'Option' Key"
+echo "it shows 'EFI BOOT' option which boots the system into 'x86raspbianfy'."
+echo "This will work for both 32/64 EFI Mac's, however if you have replaced the"
+echo "GPU on a MacPro and have no bootscreen, you have to start MacOS first and"
+echo "have disabled System Integrity Protection with csrutil or T2 systems even"
+echo "have /Applications/Utilities/Startup Security Utilitiy to be cleared."
+echo "From the Terminal in MacOS this bless command will boot debian once and"
+echo "after restarting debian it will boot back to the default MacOS again."
+echo "sudo bless --mount /Volumes/boot --file /Volumes/boot/EFI/BOOT/BOOTXYZ.efi --setBoot --nextonly" 
+echo "You have to replace 'BOOTXYZ.efi' corresponding to your EFI architecture"
+echo "for 32bit efi use 'BOOTIA32.efi' and 64bit efi use 'BOOTX64.efi' than to"
+exit "boot x86raspbianfy restart your Mac from 'Apple menu' > 'Restart' option."
 EOF
 chmod +x /home/pi/init_boot2root_uefibios_grubfix.sh
 }
