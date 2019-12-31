@@ -8,7 +8,7 @@
 #files for instance 'wpa_supplicant.conf' or 'ssh' and similar shipped packages.
 
 WHICHDISTRO=$(cat /etc/issue | sed "s| .*||" | sed -e 's/\(.*\)/\L\1/' | egrep "debian|ubuntu")
-WHICHRELEASE=$(cat /etc/apt/sources.list | grep -E "debian|ubuntu" | head -n 1 | sed "s|.*$WHICHDISTRO/ ||" | sed "| main.*||")
+WHICHRELEASE=$(cat /etc/apt/sources.list | grep -E "debian|ubuntu" | head -n 1 | sed "s|.*$WHICHDISTRO/ ||" | sed "s| main.*||")
 
 PERFORM=$1
 
