@@ -423,7 +423,7 @@ function removeswap {
 #ubuntu 18.04 mini install comes with a swapfile...
 sudo swapoff -a
 sudo rm /swapfile
-sudo sed -i '|/swapfile|#/swapfile|' /etc/fstab
+sudo sed -i 's|/swapfile|#/swapfile|' /etc/fstab
 }
 
 function fixrecoverymode {
