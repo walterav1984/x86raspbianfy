@@ -32,7 +32,7 @@ IARCH=$4
 DSIZE=$5
 #echo 50MB smaller?
 
-#amount of ram triggers low/high mem installer/question/order   
+#amount of ram triggers low/high mem installer/question/order  OOMreaper after install? 
 VMRAM=384
 
 case $DSIZE in
@@ -41,6 +41,23 @@ ISIZE=976
 ;;
 2GB)
 ISIZE=1950
+;;
+esac
+
+#arch dependent variables
+case $IARCH in
+i386)
+QARCH="i386"
+OVBARCH=""
+;;
+i686)
+QARCH="i386"
+IARCH="i386"
+OVBARCH=""
+;;
+amd64)
+QARCH="x86_64"
+OVBARCH="_64"
 ;;
 esac
 
@@ -54,18 +71,6 @@ echo "9364"
 ;;
 esac
 )
-
-#arch dependent variables
-case $IARCH in
-i386)
-QARCH="i386"
-OVBARCH=""
-;;
-amd64)
-QARCH="x86_64"
-OVBARCH="_64"
-;;
-esac
 
 #distro&arch dependent variables
 case $DISTRO in
@@ -90,6 +95,14 @@ ubuntu)
         ;;
         bionic)
         QCMPAYLOAD=qcmpayloadu1804.txt
+        ;;
+        disco)
+        #latest i386/32bit supported installer
+        QCMPAYLOAD=qcmpayloadu1904.txt
+        ;;
+        eoan)
+        #missing i386/32bit supported installer
+        QCMPAYLOAD=qcmpayloadu1910.txt
         ;;
     esac
 OVBOSTYPE="Ubuntu$OVBARCH"
@@ -131,6 +144,16 @@ wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/curre
 RELNAME=bionic
 IARCH=i386
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+IARCH=amd64
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+RELNAME=disco
+IARCH=i386
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+IARCH=amd64
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+RELNAME=eoan
+#IARCH=i386
+#wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 cd ..
