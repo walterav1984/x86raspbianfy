@@ -44,6 +44,9 @@ do
                         2GB)
                         echo "sendkey 2"
                            ;;
+			4GB)
+                        echo "sendkey 2"
+                           ;;
             esac
            ;;
        esac
@@ -56,6 +59,9 @@ do
                 echo ""
                 ;;
                 2GB)
+                echo "sendkey spc"
+                ;;
+                4GB)
                 echo "sendkey spc"
                 ;;
             esac
