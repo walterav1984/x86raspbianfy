@@ -80,10 +80,10 @@ case $DISTRO in
 debian)
     case $CNAME in
         jessie)
-        QCMPAYLOAD=qcmpayloadd8.txt
+        QCMPAYLOAD=qcmpayloadd08.txt
         ;;
         stretch)
-        QCMPAYLOAD=qcmpayloadd9.txt
+        QCMPAYLOAD=qcmpayloadd09.txt
         ;;
         buster)
         QCMPAYLOAD=qcmpayloadd10.txt
