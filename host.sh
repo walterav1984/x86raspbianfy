@@ -42,6 +42,9 @@ ISIZE=976
 2GB)
 ISIZE=1950
 ;;
+4GB)
+ISIZE=3764
+;;
 esac
 
 #arch dependent variables
