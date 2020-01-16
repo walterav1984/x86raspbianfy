@@ -304,11 +304,11 @@ sendkey kp_enter
 wait170
 #Manage Upgrades on this system? <No automatic updates>???
 sendkey kp_enter
-wait180
+wait260
 #Choose software to install: down 16x 
 sendkey tab
 sendkey kp_enter
-wait120
+wait320
 
 #Install GRUB boot loader
 sendkey kp_enter
