@@ -47,7 +47,7 @@ function grub2defaults {
 sudo sed -i 's/GRUB_HIDDEN_TIMEOUT=0/#GRUB_HIDDEN_TIMEOUT=0/g' /etc/default/grub
 sudo sed -i 's/=console/="console serial"/g' /etc/default/grub
 sudo sed -i 's/#GRUB_TERMINAL/GRUB_TERMINAL/g' /etc/default/grub
-sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M #vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0"/g' /etc/default/grub
+sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M #noefi vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0"/g' /etc/default/grub
 sudo sed -i 's/"quiet.*/""/g' /etc/default/grub
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' | sudo tee -a /etc/default/grub
 sudo update-grub2
