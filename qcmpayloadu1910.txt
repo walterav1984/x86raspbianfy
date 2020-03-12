@@ -1,6 +1,6 @@
 #qemuconsolemonitorpayload.txt
 
-#ubuntu 1804 amd64 Installer boot menu
+#ubuntu 19.10 & 20.04 amd64 Installer boot menu
 sendkey down
 sendkey down
 sendkey kp_enter
