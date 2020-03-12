@@ -33,7 +33,8 @@ DSIZE=$5
 #echo 50MB smaller?
 
 #amount of ram triggers low/high mem installer/question/order  OOMreaper after install? 
-VMRAM=384
+#384
+VMRAM=448
 
 case $DSIZE in
 1GB)
@@ -80,10 +81,10 @@ case $DISTRO in
 debian)
     case $CNAME in
         jessie)
-        QCMPAYLOAD=qcmpayloadd08.txt
+        QCMPAYLOAD=qcmpayloadd8.txt
         ;;
         stretch)
-        QCMPAYLOAD=qcmpayloadd09.txt
+        QCMPAYLOAD=qcmpayloadd9.txt
         ;;
         buster)
         QCMPAYLOAD=qcmpayloadd10.txt
@@ -104,6 +105,10 @@ ubuntu)
         QCMPAYLOAD=qcmpayloadu1904.txt
         ;;
         eoan)
+        #missing i386/32bit supported installer
+        QCMPAYLOAD=qcmpayloadu1910.txt
+        ;;
+        focal)
         #missing i386/32bit supported installer
         QCMPAYLOAD=qcmpayloadu1910.txt
         ;;
@@ -155,8 +160,9 @@ wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/curre
 IARCH=amd64
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 RELNAME=eoan
-#IARCH=i386
-#wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+IARCH=amd64
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+RELNAME=focal
 IARCH=amd64
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 cd ..
