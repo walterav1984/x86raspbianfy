@@ -206,7 +206,8 @@ sync
 echo "Check if the disk and partition below are the correct ones to resize?"
 echo $SIZEDISK $SIZEPART
 echo "Than run this script with sudo in case it says command not found!"
-parted $SIZEDISK resizepart 2 y 100%
+#parted $SIZEDISK resizepart 2 y 100% #v3.3 broken
+echo -e "yes\n100%" | sudo parted $SIZEDISK ---pretend-input-tty unit % resizepart 2
 sync
 resize2fs $SIZEPART
 sync
