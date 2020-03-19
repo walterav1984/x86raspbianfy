@@ -141,6 +141,8 @@ sudo systemctl enable sshswitch.service
 }
 
 function mkrclocal {
+case $WHICHDISTRO in
+debian)
 sudo tee /etc/systemd/system/rc-local.service <<EOF
 [Unit]
 Description=/etc/rc.local
@@ -168,6 +170,19 @@ exit 0
 EOF
 sudo chmod +x /etc/rc.local
 sudo systemctl enable rc-local.service
+;;
+ubuntu)
+sudo tee /etc/rc.local <<EOF
+#!/bin/sh -e
+#
+# rc.local
+#
+
+exit 0
+EOF
+sudo chmod +x /etc/rc.local
+;;
+esac
 }
 
 function cmdlinetxt {
@@ -557,7 +572,7 @@ grub2defaults
 grub2uefi32
 grub2uefi64
 autonetconf
-#mkrclocal
+mkrclocal
 mksshswitch
 cmdlinetxt
 keyboardlang
