@@ -223,22 +223,70 @@ sudo apt-get -y install parted mtools blktool --no-install-recommends
 cat <<'EOF' > /home/pi/init_resize_rootfs.sh
 #!/bin/bash
 
-ROOTUUID=$(cat /etc/fstab | grep ext4 | grep -v "#" |sed -e 's| /.*|"|' | sed 's|=|="|' )
+ROOTUUID=$(cat /etc/fstab | grep vfat | grep -v "#" |sed -e 's| /.*|"|' | sed 's|=|="|' )
 
-SIZEDISK=$(sudo blkid | grep $ROOTUUID | sed -e  's|2:.*||')
-SIZEPART=$(sudo blkid | grep $ROOTUUID | sed -e  's|:.*||')
+SIZEDISK=$(sudo blkid | grep $ROOTUUID | sed -e  's|1:.*||')
+SIZEPART=$(sudo blkid | grep $ROOTUUID | sed -e  's|1:.*|2|')
 
 sync
 echo "Check if the disk and partition below are the correct ones to resize?"
 echo $SIZEDISK $SIZEPART
 echo "Than run this script with sudo in case it says command not found!"
-#parted $SIZEDISK resizepart 2 y 100% #v3.3 broken
+EOF
+case $WHICHRELEASE in
+focal)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
 echo -e "yes\n100%" | sudo parted $SIZEDISK ---pretend-input-tty unit % resizepart 2
+EOF
+;;
+buster)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
+echo -e "100%\nyes" | sudo parted $SIZEDISK ---pretend-input-tty unit % resizepart 2
+EOF
+;;
+*)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
+parted $SIZEDISK resizepart 2 y 100% #v3.2 buster swapped y / v3.3 focal won't script bug/bydesign 
+EOF
+;;
+esac
+case $ENCRYPTED in
+crypto)
+case $WHICHRELEASE in
+focal)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
+echo -e "yes\n100%" | sudo parted $SIZEDISK ---pretend-input-tty unit % resizepart 5
+EOF
+;;
+buster)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
+echo -e "100%\nyes" | sudo parted $SIZEDISK ---pretend-input-tty unit % resizepart 5
+EOF
+;;
+*)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
+parted $SIZEDISK resizepart 5 y 100% #v3.2 buster swapped y / v3.3 focal won't script bug/bydesign 
+EOF
+;;
+esac
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
+printf "raspberry"|sudo cryptset resize sda5_crypt #password!
+pvresize /dev/mapper/sda5_crypt
+sudo lvextend -l +100%FREE /dev/lvmgrp/lvmv1
+sudo resize2fs -p /dev/mapper/lvmgrp-lvmv1
+sync
+reboot
+EOF
+;;
+*)
+cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
 sync
 resize2fs $SIZEPART
 sync
 reboot
 EOF
+;;
+esac
 
 chmod +x /home/pi/init_resize_rootfs.sh
 
