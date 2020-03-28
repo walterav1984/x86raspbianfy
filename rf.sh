@@ -270,9 +270,9 @@ EOF
 ;;
 esac
 cat <<'EOF' >> /home/pi/init_resize_rootfs.sh
-printf "raspberry"|sudo cryptset resize sda5_crypt #password!
-pvresize /dev/mapper/sda5_crypt
-sudo lvextend -l +100%FREE /dev/lvmgrp/lvmv1
+printf "raspberry"|sudo cryptsetup resize sda5_crypt #password!
+sudo pvresize /dev/mapper/sda5_crypt
+sudo lvextend -l +100%FREE /dev/lvmgrp/lvmv1 #lvresize also works
 sudo resize2fs -p /dev/mapper/lvmgrp-lvmv1
 sync
 reboot
