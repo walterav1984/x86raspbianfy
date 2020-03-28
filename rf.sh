@@ -9,7 +9,7 @@
 
 WHICHDISTRO=$(cat /etc/issue | sed "s| .*||" | sed -e 's/\(.*\)/\L\1/' | egrep "debian|ubuntu")
 WHICHRELEASE=$(cat /etc/apt/sources.list | grep -E "debian|ubuntu" | head -n 1 | sed "s|.*$WHICHDISTRO/ ||" | sed "s| main.*||")
-ENRCYPTED=$(sudo blkid | grep crypto | sed -e "s|.*crypto|crypto|" | sed -e "s|_LUKS.*||")
+ENCRYPTED=$(sudo blkid | grep crypto | sed -e "s|.*crypto|crypto|" | sed -e "s|_LUKS.*||")
 
 PERFORM=$1
 
@@ -29,7 +29,7 @@ sudo cp -a boot boot.bak
 sudo umount /boot
 sudo cp /etc/fstab /etc/fstab.bak
 case $ENCRYPTED in
-crpyto)
+crypto)
 head -n 9 /etc/fstab | sudo tee /etc/fstab
 ;;
 *)
@@ -58,7 +58,7 @@ sudo sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=5/g' /etc/default/grub
 sudo sed -i 's/GRUB_HIDDEN_TIMEOUT=0/#GRUB_HIDDEN_TIMEOUT=0/g' /etc/default/grub
 sudo sed -i 's/=console/="console serial"/g' /etc/default/grub
 sudo sed -i 's/#GRUB_TERMINAL/GRUB_TERMINAL/g' /etc/default/grub
-sudo sed -i 's/""/"console=tty1 console=ttyS0,115200 net.ifnames=0 biosdevname=0 vmalloc=128M #noefi vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0"/g' /etc/default/grub
+sudo sed -i 's/""/"console=ttyS0,115200 console=tty1 net.ifnames=0 biosdevname=0 vmalloc=128M #noefi vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0"/g' /etc/default/grub
 sudo sed -i 's/"quiet.*/""/g' /etc/default/grub
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' | sudo tee -a /etc/default/grub
 sudo update-grub2
