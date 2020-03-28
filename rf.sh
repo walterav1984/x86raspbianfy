@@ -26,6 +26,7 @@ sudo apt-get -y install dosfstools
 cd /
 sudo cp -a boot boot.bak
 sudo umount /boot
+sudo cp /etc/fstab /etc/fstab.bak
 head /etc/fstab | sudo tee /etc/fstab
 sudo sed -i "s/errors=remount-ro/defaults,noatime/g" /etc/fstab
 sudo mkfs.msdos -n boot /dev/sda1
