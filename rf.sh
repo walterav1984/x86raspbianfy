@@ -9,6 +9,7 @@
 
 WHICHDISTRO=$(cat /etc/issue | sed "s| .*||" | sed -e 's/\(.*\)/\L\1/' | egrep "debian|ubuntu")
 WHICHRELEASE=$(cat /etc/apt/sources.list | grep -E "debian|ubuntu" | head -n 1 | sed "s|.*$WHICHDISTRO/ ||" | sed "s| main.*||")
+ENRCYPTED=$(sudo blkid | grep crypto | sed -e "s|.*crypto|crypto|" | sed -e "s|_LUKS.*||")
 
 PERFORM=$1
 
@@ -27,7 +28,14 @@ cd /
 sudo cp -a boot boot.bak
 sudo umount /boot
 sudo cp /etc/fstab /etc/fstab.bak
+case $ENCRYPTED in
+crpyto)
+head -n 9 /etc/fstab | sudo tee /etc/fstab
+;;
+*)
 head /etc/fstab | sudo tee /etc/fstab
+;;
+esac
 sudo sed -i "s/errors=remount-ro/defaults,noatime/g" /etc/fstab
 sudo mkfs.msdos -n boot /dev/sda1
 printf "t\n1\nc\nw\nq\n" | sudo fdisk /dev/sda
