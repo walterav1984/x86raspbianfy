@@ -1,0 +1,697 @@
+#qemuconsolemonitorpayload.txt
+
+#Debian i386/amd64 GNU/Linux installer boot menu
+sendkey down
+sendkey down
+sendkey kp_enter
+#Advanced Options
+sendkey down 
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter 
+wait20
+
+#!! Low memory mode archdiff?
+sendkey kp_enter
+
+#choose language
+sendkey kp_enter
+
+#continent or region
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+sendkey pgdn
+sendkey pgdn
+sendkey pgdn
+sendkey up
+sendkey kp_enter
+#depending on your choice additinal locales
+sendkey pgdn
+sendkey pgdn
+sendkey pgdn
+sendkey pgdn
+sendkey pgdn
+sendkey pgdn
+sendkey pgdn
+sendkey down
+sendkey down
+sendkey down
+#United Kingdom en_GB.UTF-8
+sendkey spc
+sendkey tab
+sendkey kp_enter
+#default system locales C?
+sendkey down
+sendkey kp_enter
+wait5
+
+#Configure the keyboard
+sendkey down
+sendkey kp_enter
+#British English
+sendkey kp_enter
+
+#Detect and mount CD-ROM
+sendkey kp_enter
+#Continue
+wait5
+sendkey kp_enter
+
+#Load installer components from CD
+sendkey kp_enter
+sendkey tab
+sendkey kp_enter
+wait45
+
+#Detect network hardware
+sendkey kp_enter
+wait5
+
+#Configure the network
+sendkey kp_enter
+#Auto-configure networking Yes
+sendkey kp_enter
+sendkey kp_enter
+wait10
+
+#Hostname
+sendkey kp_enter
+#Domainname
+sendkey kp_enter
+
+#Set up users and passwords
+sendkey kp_enter
+#enable Shadow passwords? <Yes>
+sendkey kp_enter
+#Allow login as root? <No>
+sendkey tab
+sendkey kp_enter
+#Full name <Continue>
+sendkey p
+sendkey i
+sendkey kp_enter
+#Username for your account: 
+sendkey kp_enter
+#Choose a password...
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+#Re-enter
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait10
+
+#Free memory low memory
+sendkey kp_enter
+
+#Configure the clock
+sendkey kp_enter
+wait5
+#Set the clock using NTP? <Yes>
+sendkey kp_enter
+#NTP server to use:0.debian.pool.ntp.org
+sendkey kp_enter
+wait5
+#Select yout time zone: Coordinated Universal Time (UTC)
+sendkey down
+sendkey kp_enter
+wait5
+
+#Detect disks
+sendkey kp_enter
+wait5
+
+#Partition disks ?removed 3 lines
+sendkey kp_enter
+wait10
+#Partition method:manual
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+wait10
+#This is an overview... SCSI1 (0,0,0) sda1
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+wait5
+#Create a new empty partition table on this device?
+sendkey tab
+sendkey tab
+sendkey kp_enter
+#Partition table type:msdos
+sendkey kp_enter
+#This is an overview...
+sendkey down
+sendkey kp_enter
+#How to use this free space: Create a new partition
+sendkey kp_enter
+#New partition size:
+sendkey backspace
+sendkey backspace
+sendkey backspace
+sendkey backspace
+sendkey backspace
+sendkey backspace
+sendkey backspace
+sendkey backspace
+#STEPSIZEDIFF
+sendkey 0
+sendkey 0
+sendkey kp_enter
+#Type for the new partition:Primary
+sendkey kp_enter
+#Location for the new partition:Beginning
+sendkey kp_enter
+#Partition settings:Mount point: /
+sendkey down
+sendkey down
+sendkey kp_enter
+#Mount point for this partition: /boot
+#sendkey down
+wait60
+sendkey kp_enter
+#Partiton settings
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+
+#This is an overview...:log
+sendkey down
+sendkey kp_enter
+
+sendkey kp_enter
+sendkey kp_enter
+
+#type logical
+sendkey kp_enter
+
+#use as
+sendkey kp_enter
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+#erase yes
+sendkey kp_enter
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+
+#part disks overview
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey kp_enter
+sendkey tab
+sendkey kp_enter
+#create encrypted?
+sendkey kp_enter
+sendkey down
+sendkey spc
+sendkey kp_enter
+sendkey down
+sendkey kp_enter
+#You need to choose a passphrase
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait2
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait15
+#!!!partition disks
+sendkey up
+sendkey kp_enter
+sendkey tab
+sendkey kp_enter
+wait5
+#LVM configuration action
+sendkey down
+sendkey kp_enter
+#LVM groupname
+sendkey l
+sendkey v
+sendkey m
+sendkey g
+sendkey r
+sendkey p
+sendkey kp_enter
+
+#Please select devices for the ...
+sendkey spc
+sendkey kp_enter
+
+#summary of current LVM
+sendkey down
+sendkey down
+sendkey kp_enter
+
+sendkey kp_enter
+#logical vol name
+sendkey l
+sendkey v
+sendkey m
+sendkey v
+sendkey 1
+sendkey kp_enter
+
+#size
+sendkey kp_enter
+
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+#!!!partition disks
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+#partition settings
+sendkey up
+sendkey up
+sendkey up
+sendkey kp_enter
+#how to use this partition ext4
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey up
+sendkey kp_enter
+#partition disks
+sendkey down
+sendkey down
+sendkey kp_enter
+#mount point
+sendkey kp_enter
+
+sendkey down
+sendkey down
+sendkey kp_enter
+#label
+sendkey r
+sendkey o
+sendkey o
+sendkey t
+sendkey f
+sendkey s
+sendkey kp_enter
+
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+#!! Partition disks
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey kp_enter
+
+#You have not... <No>
+sendkey tab
+sendkey kp_enter
+#If you continue... <Yes>
+sendkey tab
+sendkey kp_enter
+wait10
+
+#Install the base system
+sendkey kp_enter
+wait275
+#Kernel to install:linux-image-686 / remove sendkey up for amd64!
+#STEPARCHDIFF
+sendkey kp_enter
+wait25
+#Drivers to include in the initrd:generic
+sendkey kp_enter
+wait140
+
+#Configure the package manager
+sendkey kp_enter
+wait5
+#Scan another CD or DVD? <No>
+sendkey kp_enter
+wait5
+#Use a network mirror? <Yes>
+sendkey kp_enter
+#Protocol for file downloads:http
+sendkey kp_enter
+#Debian archive mirror country:United Kingdom
+sendkey kp_enter
+#Debian archive mirror:deb.debian.org
+sendkey kp_enter
+#HTTP proxy information (blank for none):?
+sendkey kp_enter
+wait5
+#Use non-free software?<Yes>
+sendkey tab
+sendkey tab
+sendkey kp_enter
+wait5
+#Enable source repositories in APT?<No>
+sendkey tab
+sendkey kp_enter
+wait70
+#Services to use:   	
+sendkey tab
+sendkey kp_enter
+wait25
+
+#Select and install software
+sendkey kp_enter
+wait140
+#automatic updates?
+sendkey kp_enter
+wait30
+#Participate in the package usage survey? <No>
+sendkey kp_enter
+wait15
+#Choose software to install:
+#standard utilities wel in 2GB
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey down
+sendkey spc
+sendkey down
+sendkey spc
+#STEPPSELDIFF
+sendkey tab
+sendkey kp_enter
+wait130
+
+#Install the GRUB boot loader...
+sendkey kp_enter
+wait50
+#Install the GRUB boot loader to the master boot record?<Yes>
+sendkey kp_enter
+#Device for boot loader installation:/dev/sda
+sendkey down
+sendkey kp_enter
+#Force GRUB installtion to the EFI remoavle media path?<No>
+sendkey kp_enter
+wait35
+
+#Finish the installation
+sendkey kp_enter
+wait30
+#Is the system clock set to UTC? <Yes>
+sendkey kp_enter
+wait35
+#Installation complete <Continue>
+sendkey kp_enter
+#rebooting...
+wait10
+
+#ejecting Debian Installer cdrom
+eject ide1-cd0
+system_reset
+#rebooting...
+wait25
+
+#encryption Password: 
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait20
+
+#debian login:
+sendkey p
+sendkey i
+sendkey kp_enter
+#Password: 
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait10
+
+#apt-get curl "no install candidate"
+sendkey s
+sendkey u
+sendkey d
+sendkey o
+sendkey spc
+sendkey a
+sendkey p
+sendkey t
+sendkey spc
+sendkey minus
+sendkey y
+sendkey spc
+sendkey i
+sendkey n
+sendkey s
+sendkey t
+sendkey a
+sendkey l
+sendkey l
+sendkey spc
+sendkey c
+sendkey u
+sendkey r
+sendkey l
+sendkey kp_enter
+#type sudo password
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey e
+sendkey r
+sendkey r
+sendkey y
+sendkey kp_enter
+wait25
+
+#github script
+sendkey c
+sendkey u
+sendkey r
+sendkey l
+sendkey spc
+sendkey minus
+sendkey shift-o
+sendkey spc
+sendkey h
+sendkey t
+sendkey t
+sendkey p
+sendkey s
+sendkey shift-semicolon
+sendkey slash
+sendkey slash
+sendkey r
+sendkey a
+sendkey w
+sendkey dot
+sendkey g
+sendkey i
+sendkey t
+sendkey h
+sendkey u
+sendkey b
+sendkey u
+sendkey s
+sendkey e
+sendkey r
+sendkey c
+sendkey o
+sendkey n
+sendkey t
+sendkey e
+sendkey n
+sendkey t
+sendkey dot
+sendkey c
+sendkey o
+sendkey m
+sendkey slash
+sendkey w
+sendkey a
+sendkey l
+sendkey t
+sendkey e
+sendkey r
+sendkey a
+sendkey v
+sendkey 1
+sendkey 9
+sendkey 8
+sendkey 4
+sendkey slash
+sendkey x
+sendkey 8
+sendkey 6
+sendkey r
+sendkey a
+sendkey s
+sendkey p
+sendkey b
+sendkey i
+sendkey a
+sendkey n
+sendkey f
+sendkey y
+sendkey slash
+sendkey m
+sendkey a
+sendkey s
+sendkey t
+sendkey e
+sendkey r
+sendkey slash
+sendkey r
+sendkey f
+sendkey dot
+sendkey s
+sendkey h
+sendkey kp_enter
+wait 10
+
+#script execute permission
+sendkey c
+sendkey h
+sendkey m
+sendkey o
+sendkey d
+sendkey spc
+sendkey kp_add
+sendkey x
+sendkey spc
+sendkey r
+sendkey f
+sendkey dot
+sendkey s
+sendkey h
+sendkey kp_enter
+
+#execute x86raspbianfy script
+sendkey s
+sendkey u
+sendkey d
+sendkey o
+sendkey spc
+sendkey dot
+sendkey slash
+sendkey r
+sendkey f
+sendkey dot
+sendkey s
+sendkey h
+sendkey spc
+sendkey m
+sendkey a
+sendkey k
+sendkey e
+#STEPSIZEDIFF
+sendkey kp_enter
+#type sudo password
+#sendkey r
+#sendkey a
+#sendkey s
+#sendkey p
+#sendkey b
+#sendkey e
+#sendkey r
+#sendkey r
+#sendkey y
+#sendkey kp_enter
+
+#Script done, wait until vm has finished rf.sh script and follow instructions!
