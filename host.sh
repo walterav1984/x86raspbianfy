@@ -100,10 +100,6 @@ ubuntu)
         bionic)
         QCMPAYLOAD=qcmpayloadu1804.txt
         ;;
-        disco)
-        #latest i386/32bit supported installer
-        QCMPAYLOAD=qcmpayloadu1904.txt
-        ;;
         eoan)
         #missing i386/32bit supported installer
         QCMPAYLOAD=qcmpayloadu1910.txt
@@ -154,17 +150,12 @@ IARCH=i386
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 IARCH=amd64
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
-RELNAME=disco
-IARCH=i386
-wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
-IARCH=amd64
-wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 RELNAME=eoan
 IARCH=amd64
 wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 RELNAME=focal
 IARCH=amd64
-wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
+wget http://archive.ubuntu.com/ubuntu/dists/$RELNAME/main/installer-$IARCH/current/legacy-images/netboot/mini.iso -O $DISTRO-$RELNAME-$IARCH.iso
 cd ..
 }
 
