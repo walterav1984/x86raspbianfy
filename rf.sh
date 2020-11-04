@@ -372,7 +372,27 @@ fi
 
 ORIBUUID=$(cat /etc/fstab | grep vfat | sed 's|/.*||' | sed 's|.*=||')
 ORIRUUID=$(cat /etc/fstab | grep ext4 | sed 's|/.*||' | sed 's|.*=||')
-BRDEV=$(sudo blkid | grep $ORIBUUID | sed 's|:.*||'| sed 's|[0-9]*||g')
+WHICHSTORAGETYPE=$(sudo blkid | grep $ORIRUUID | sed 's|/dev/||' | cut -c 1-2)
+
+case $WHICHSTORAGETYPE in
+sd)
+BRDEV=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|[0-9]||g')
+#sda2
+;;
+hd)
+BRDEV=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|[0-9]||g')
+#hda2
+;;
+nv)
+BRDEV=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|p[0-9]*||g')
+#nvme0n1p2
+;;
+mm)
+BRDEV=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|p[0-9]*||g')
+#mmcblk0p2
+;;
+esac
+
 BDEVPART=$(sudo blkid | grep $ORIBUUID | sed 's|:.*||')
 RDEVPART=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||')
 
