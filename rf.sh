@@ -56,9 +56,9 @@ function grub2defaults {
 sudo sed -i 's/GRUB_TIMEOUT_STYLE=hidden/#GRUB_TIMEOUT_STYLE=hidden/g' /etc/default/grub
 sudo sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=5/g' /etc/default/grub
 sudo sed -i 's/GRUB_HIDDEN_TIMEOUT=0/#GRUB_HIDDEN_TIMEOUT=0/g' /etc/default/grub
-sudo sed -i 's/=console/="console serial"/g' /etc/default/grub
+sudo sed -i 's/=console/="console serial"/g' /etc/default/grub #intel nuc won't boot if monitor is disconnected unless 'console' gets removed!
 sudo sed -i 's/#GRUB_TERMINAL/GRUB_TERMINAL/g' /etc/default/grub
-sudo sed -i 's/""/"console=ttyS0,115200 console=tty1 net.ifnames=0 biosdevname=0 vmalloc=128M #noefi vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0"/g' /etc/default/grub
+sudo sed -i 's/""/"console=ttyS0,115200 console=tty1 net.ifnames=0 biosdevname=0 init_on_alloc=0 #vmalloc=128M noefi vga=normal video=vesafb:off nofb nomodeset modprobe.blacklist=gma500_gfx i915.modeset=0 nouveau.modeset=0 mitigations=off fsck.mode=skip nopersistent"/g' /etc/default/grub
 sudo sed -i 's/"quiet.*/""/g' /etc/default/grub
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' | sudo tee -a /etc/default/grub
 sudo update-grub2
