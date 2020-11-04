@@ -223,10 +223,28 @@ sudo apt-get -y install parted mtools blktool --no-install-recommends
 cat <<'EOF' > /home/pi/init_resize_rootfs.sh
 #!/bin/bash
 
-ROOTUUID=$(cat /etc/fstab | grep vfat | grep -v "#" |sed -e 's| /.*|"|' | sed 's|=|="|' )
+ORIRUUID=$(cat /etc/fstab | grep ext4 | sed 's|/.*||' | sed 's|.*=||')
+WHICHSTORAGETYPE=$(sudo blkid | grep $ORIRUUID | sed 's|/dev/||' | cut -c 1-2)
+case $WHICHSTORAGETYPE in
+sd)
+SIZEDISK=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|[0-9]||g')
+#sda2
+;;
+hd)
+SIZEDISK=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|[0-9]||g')
+#hda2
+;;
+nv)
+SIZEDISK=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|p[0-9]*||g')
+#nvme0n1p2
+;;
+mm)
+SIZEDISK=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||'| sed 's|p[0-9]*||g')
+#mmcblk0p2
+;;
+esac
 
-SIZEDISK=$(sudo blkid | grep $ROOTUUID | sed -e  's|1:.*||')
-SIZEPART=$(sudo blkid | grep $ROOTUUID | sed -e  's|1:.*|2|')
+SIZEPART=$(sudo blkid | grep $ORIRUUID | sed 's|:.*||')
 
 sync
 echo "Check if the disk and partition below are the correct ones to resize?"
