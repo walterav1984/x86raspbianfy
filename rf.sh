@@ -580,7 +580,7 @@ sudo apt-get autoremove
 }
 
 function x86tools {
-sudo apt-get -y install pcmciautils lsscsi memtest86+ util-linux intel-microcode amd64-microcode #lm-sensors smartmontools
+sudo apt-get -y install pcmciautils lsscsi memtest86+ util-linux intel-microcode amd64-microcode #lm-sensors smartmontools mmc-utils
 }
 
 function personal {
